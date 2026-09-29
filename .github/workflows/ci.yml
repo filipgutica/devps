@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Check (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: python3 -m py_compile devps
+      - name: Verify CLI version
+        run: test "$(./devps --version)" = "$(cat version.txt)"
+      - run: test/smoke.sh
