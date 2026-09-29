@@ -19,7 +19,7 @@ import sys
 import time
 from dataclasses import dataclass, field
 
-__version__ = "0.1.0"  # x-release-please-version
+__version__ = "0.1.1"  # x-release-please-version
 HOME = os.path.expanduser("~")
 RUNTIMES = re.compile(r"^(node|bun|deno|python[\d.]*|ruby|php|java|go|dotnet|beam\.smp|uvicorn|gunicorn|hugo|caddy|air)$", re.I)
 SHELLS = {"zsh", "bash", "sh", "fish", "dash", "tcsh", "nu", "login", "sshd", "launchd"}
