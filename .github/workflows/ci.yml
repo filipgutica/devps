@@ -19,4 +19,5 @@ jobs:
       - run: python3 -m py_compile devps
       - name: Verify CLI version
         run: test "$(./devps --version)" = "$(cat version.txt)"
-      - run: test/smoke.sh
+      # Hosted macOS runners hide sockets from unprivileged lsof, so the smoke test runs as root there.
+      - run: sudo --preserve-env=PATH test/smoke.sh
