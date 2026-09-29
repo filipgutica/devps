@@ -9,7 +9,12 @@ server=$!
 trap 'kill "$server" 2>/dev/null || true' EXIT
 for _ in $(seq 50); do lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null && break; sleep 0.1; done
 
-"$devps" ls | grep -q ":$port" || { echo "devps ls did not list :$port"; "$devps" ls; exit 1; }
+diagnose() {
+  echo "--- lsof listeners"; lsof -nP -iTCP -sTCP:LISTEN || true
+  echo "--- server process"; ps -o pid=,ppid=,tty=,comm= -p "$server" || true
+  echo "--- devps --all"; "$devps" ls --all || true
+}
+"$devps" ls | grep -q ":$port" || { echo "devps ls did not list :$port"; diagnose; exit 1; }
 "$devps" _preview "$server" | grep -q ":$port" || { echo "preview did not resolve job $server"; exit 1; }
 "$devps" kill "$port" -y
 sleep 0.5
