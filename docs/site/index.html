@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      devps · Find your local dev servers and the sessions that started them.
+    </title>
+    <meta
+      name="description"
+      content="Find your local dev servers and the sessions that started them."
+    />
+    <meta property="og:title" content="devps" />
+    <meta
+      property="og:description"
+      content="Find your local dev servers and the sessions that started them."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://filipgutica.github.io/devps/" />
+    <link rel="canonical" href="https://filipgutica.github.io/devps/" />
+    <link rel="stylesheet" href="./tokens.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="./site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="page">
+      <header class="site-header">
+        <nav class="tool-nav" aria-label="Tools">
+          <a href="https://filipgutica.github.io/annoterm/">annoterm</a
+          ><a href="https://filipgutica.github.io/wtree/">wtree</a
+          ><a href="https://filipgutica.github.io/devps/" aria-current="page"
+            >devps</a
+          >
+        </nav>
+        <div class="segmented" role="group" aria-label="Color theme" hidden>
+          <button type="button" data-theme-choice="system" aria-pressed="true">
+            System
+          </button>
+          <button type="button" data-theme-choice="light" aria-pressed="false">
+            Light
+          </button>
+          <button type="button" data-theme-choice="dark" aria-pressed="false">
+            Dark
+          </button>
+        </div>
+      </header>
+      <main id="main">
+        <div class="opening">
+          <section class="intro" aria-labelledby="title">
+            <h1 id="title">devps</h1>
+            <p class="tagline">Find the server. Get back to work.</p>
+            <p class="lede">
+              Ports, projects, and the sessions that started them. Built for
+              macOS.
+            </p>
+            <div class="actions">
+              <a class="btn primary" href="#install">Install with Homebrew</a
+              ><a class="btn" href="https://github.com/filipgutica/devps"
+                >View source</a
+              >
+            </div>
+            <p class="meta">macOS only · Python · MIT license</p>
+          </section>
+          <figure class="preview">
+            <a
+              href="./preview.png"
+              aria-label="Open full devps terminal preview"
+              ><img
+                src="./preview.png"
+                width="750"
+                height="400"
+                alt="devps showing port, origin, and process details for an isolated demo server."
+                fetchpriority="high"
+            /></a>
+            <figcaption>
+              Actual tool capture with demo data. Select to view full size.
+            </figcaption>
+          </figure>
+        </div>
+        <section id="install" aria-labelledby="install-title">
+          <h2 id="install-title">Install</h2>
+          <div class="example">
+            <div class="code">
+              <div class="code-head">
+                <span>Homebrew</span
+                ><button
+                  class="btn ghost"
+                  type="button"
+                  data-copy
+                  hidden
+                  aria-label="Copy homebrew command"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre
+                tabindex="0"
+                aria-label="Homebrew command"
+              ><code>brew install filipgutica/tap/devps</code></pre>
+            </div>
+            <p class="copy-status" role="status"></p>
+            <p class="note">
+              Homebrew installs Python and fzf. devps supports macOS only.
+            </p>
+          </div>
+          <p class="note">
+            Install <a href="https://brew.sh/">Homebrew</a> first if the brew
+            command is unavailable. See the
+            <a href="https://github.com/filipgutica/devps#quick-start"
+              >README</a
+            >
+            for installation details.
+          </p>
+        </section>
+        <section aria-labelledby="workflow-title">
+          <h2 id="workflow-title">Get back to the right session</h2>
+          <div class="examples">
+            <div class="example">
+              <div class="example-copy">
+                <h3>List running servers</h3>
+                <p class="note">
+                  Get a plain table with one row per job, including jobs that
+                  listen on several ports.
+                </p>
+              </div>
+              <div class="code">
+                <div class="code-head">
+                  <span>Command</span
+                  ><button
+                    class="btn ghost"
+                    type="button"
+                    data-copy
+                    hidden
+                    aria-label="Copy list running servers command"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <pre
+                  tabindex="0"
+                  aria-label="List running servers command"
+                ><code>devps ls</code></pre>
+              </div>
+              <p class="copy-status" role="status"></p>
+            </div>
+            <div class="example">
+              <div class="example-copy">
+                <h3>Open the picker</h3>
+                <p class="note">
+                  Press Enter to jump, Ctrl+O to open in the browser, or Ctrl+X
+                  to review stopping a job.
+                </p>
+              </div>
+              <div class="code">
+                <div class="code-head">
+                  <span>Command</span
+                  ><button
+                    class="btn ghost"
+                    type="button"
+                    data-copy
+                    hidden
+                    aria-label="Copy open the picker command"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <pre
+                  tabindex="0"
+                  aria-label="Open the picker command"
+                ><code>devps</code></pre>
+              </div>
+              <p class="copy-status" role="status"></p>
+            </div>
+            <div class="example">
+              <div class="example-copy">
+                <h3>Jump to a server</h3>
+                <p class="note">
+                  Use a listening port or PID from the list. devps focuses the
+                  terminal, editor, or agent app that started it.
+                </p>
+              </div>
+              <div class="code">
+                <div class="code-head">
+                  <span>Command</span
+                  ><button
+                    class="btn ghost"
+                    type="button"
+                    data-copy
+                    hidden
+                    aria-label="Copy jump to a server command"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <pre
+                  tabindex="0"
+                  aria-label="Jump to a server command"
+                ><code>devps jump 5173</code></pre>
+              </div>
+              <p class="copy-status" role="status"></p>
+            </div>
+          </div>
+        </section>
+        <section aria-labelledby="reference-title">
+          <h2 id="reference-title">Keep these close</h2>
+          <dl class="reference">
+            <dt><code>devps open 5173</code></dt>
+            <dd>Open the server in your browser.</dd>
+            <dt><code>devps kill 5173</code></dt>
+            <dd>Stop the job and its children after confirmation.</dd>
+            <dt><code>devps --all</code></dt>
+            <dd>Include every TCP listener, beyond dev runtimes.</dd>
+            <dt><code>Tab / Ctrl+R</code></dt>
+            <dd>Multi-select or refresh in the picker.</dd>
+          </dl>
+          <p class="note">
+            Jump precision depends on the origin: terminal tabs and panes can be
+            targeted; editor and agent origins may focus an app or window.
+            Stopping sends SIGTERM, then SIGKILL to survivors after three
+            seconds.
+          </p>
+          <div class="actions">
+            <a class="btn" href="https://github.com/filipgutica/devps#readme"
+              >Read the full reference</a
+            >
+          </div>
+        </section>
+        <section aria-labelledby="related-title">
+          <h2 id="related-title">More tools for local work</h2>
+          <ul class="related">
+            <li>
+              <a href="https://filipgutica.github.io/annoterm/"
+                ><code>annoterm</code></a
+              >
+              <p>
+                Review Markdown in the terminal. Send precise feedback to your
+                coding agent.
+              </p>
+            </li>
+            <li>
+              <a href="https://filipgutica.github.io/wtree/"
+                ><code>wtree</code></a
+              >
+              <p>
+                See your Git worktrees, their pull requests, and what is ready
+                to clean up.
+              </p>
+            </li>
+          </ul>
+          <p class="note">
+            All three tools are available from
+            <a href="https://github.com/filipgutica/homebrew-tap"
+              >Filip’s Homebrew tap</a
+            >.
+          </p>
+        </section>
+      </main>
+      <footer>
+        <a href="https://github.com/filipgutica">Built by Filip Gutica</a
+        ><a href="https://github.com/filipgutica/devps/issues"
+          >Report an issue</a
+        ><a href="https://github.com/filipgutica/devps/releases">Releases</a
+        ><a href="https://github.com/filipgutica/devps/blob/main/LICENSE"
+          >MIT license</a
+        >
+      </footer>
+    </div>
+  </body>
+</html>
