@@ -72,7 +72,7 @@ class Proc:
     def app(self):
         # Outermost installed .app bundle, so "Code Helper (Plugin).app" inside VS Code still reports VS Code.
         # Anchored to app folders because Homebrew Python runs from .../Python.app and is not a GUI app.
-        m = re.match(r"(?:/System)?(?:/Users/[^/]+)?/Applications/([^/]+)\.app/", self.comm)
+        m = re.match(r"(?:/System)?(?:/Users/[^/]+)?/Applications/(?:[^/]+/)*?([^/]+)\.app/", self.comm)
         return m.group(1) if m else None
 
 
@@ -251,7 +251,7 @@ def classify(job, table):
     if agent_label:
         parts.append(agent_label + (f" {session_hint[:8]}" if session_hint else ""))
     if host and host != agent_label:
-        parts.append(host if agent_label or not tty else f"{host} terminal {tty}")
+        parts.append(host if agent_label or not tty else f"{host} {tty}" if host in ("Terminal", "iTerm2", "Warp") else f"{host} terminal {tty}")
     if tmux:
         parts.append("tmux")
     if not parts:
@@ -279,14 +279,16 @@ def classify(job, table):
     elif host == "iTerm2" and env.get("ITERM_SESSION_ID"):
         uid = env["ITERM_SESSION_ID"].split(":")[-1]
         job.jump = ("iTerm2 tab (exact)", [osa(
-            'tell application "iTerm2"\nactivate\nrepeat with w in windows\nrepeat with t in tabs of w\n'
+            'tell application "iTerm"\nrepeat with w in windows\nrepeat with t in tabs of w\n'
             'repeat with s in sessions of t\nif unique id of s is "' + uid + '" then\nselect w\ntell t to select\n'
-            'tell s to select\nreturn\nend if\nend repeat\nend repeat\nend repeat\nend tell')], clip)
+            'tell s to select\nreturn\nend if\nend repeat\nend repeat\nend repeat\nend tell'),
+            # AppleScript activate does not raise the app when devps runs from another app's terminal.
+            ["open", "-b", "com.googlecode.iterm2"]], clip)
     elif host == "Terminal" and tty:
         job.jump = ("Terminal tab (exact)", [osa(
             'tell application "Terminal"\nactivate\nrepeat with w in windows\nrepeat with t in tabs of w\n'
             'if tty of t is "/dev/' + tty + '" then\nset selected of t to true\nset index of w to 1\nreturn\n'
-            'end if\nend repeat\nend repeat\nend tell')], clip)
+            'end if\nend repeat\nend repeat\nend tell'), ["open", "-b", "com.apple.Terminal"]], clip)
     elif host == "VS Code":
         job.jump = ("VS Code window for this folder (not the terminal tab)",
                     [["open", "-b", "com.microsoft.VSCode", top or job.cwd]], clip)
@@ -431,7 +433,9 @@ def stop(job, table, yes=False):
 def jump(job):
     desc, cmds, clip = job.jump
     for cmd in cmds:
-        subprocess.run(cmd, capture_output=True)
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        if r.returncode != 0:
+            sys.exit(f"devps: could not jump to {desc}: {r.stderr.strip() or f'{cmd[0]} exited {r.returncode}'}")
     if clip and shutil.which("pbcopy"):
         subprocess.run(["pbcopy"], input=clip, text=True)
     print(f"→ {desc}" + (f"\n  copied: {bold(clip)}" if clip else ""))
