@@ -32,6 +32,8 @@ Picker keys: `enter` jump, `ctrl-o` open in browser, `ctrl-x` stop (asks first),
 
 ## How it works
 
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) has the full design. In short:
+
 **One row per job.** A `pnpm dev` that starts two vite servers is one row with both ports. The job root is the topmost process below the shell, agent, or app that launched it.
 
 **Origin.** devps walks the process ancestry to find the terminal, editor, or agent. When the parent is gone (an orphan), it reads a fixed allowlist of environment keys that the process inherited, such as `WARP_FOCUS_URL`, `ITERM_SESSION_ID`, `CLAUDE_CODE_SESSION_ID`, and `CODEX_THREAD_ID`. It never reads or prints any other environment values, because dev server environments often hold tokens.
