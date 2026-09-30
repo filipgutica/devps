@@ -35,7 +35,7 @@ devps ls
 devps
 ```
 
-The Homebrew formula installs Node and `fzf`. Without `fzf`, or without a terminal on standard input, devps prints the table instead.
+`fzf` provides the interactive picker. Without it, or without a terminal on standard input, devps prints the table instead.
 
 ## Commands
 
@@ -103,7 +103,7 @@ npm test       # builds and checks the compiled CLI against process snapshots
 npm run smoke # starts a throwaway runner and child server, lists them, stops them
 ```
 
-The installed command runs compiled JavaScript with Node. It has no runtime npm dependencies.
+The TypeScript build runs compiled JavaScript with Node. It has no runtime npm dependencies.
 CI runs these checks on macOS, including the real process smoke test.
 
 Releases use Release Please with Conventional Commit PR titles: `fix:` creates a patch release; `feat:` creates a minor release.

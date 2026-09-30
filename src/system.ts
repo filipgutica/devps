@@ -20,8 +20,12 @@ export function run(command: readonly string[]): string {
 
 export function which(command: string): boolean {
   return (process.env.PATH ?? '').split(delimiter).some(directory => {
-    try { accessSync(join(directory, command), constants.X_OK); return true; }
-    catch { return false; }
+    try {
+      const candidate = join(directory, command);
+      if (!statSync(candidate).isFile()) return false;
+      accessSync(candidate, constants.X_OK);
+      return true;
+    } catch { return false; }
   });
 }
 
