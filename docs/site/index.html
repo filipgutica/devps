@@ -54,7 +54,7 @@
               <code data-copy-text>brew install filipgutica/tap/devps</code>
               <button class="btn primary" type="button" data-copy hidden aria-label="Copy install command">Copy</button>
             </div>
-            <p class="hint">Homebrew installs Python and <code>fzf</code>. Without <code>fzf</code>, or outside a terminal, devps prints a plain table. New to Homebrew? <a href="https://brew.sh/">Install it first</a>.</p>
+            <p class="hint">Homebrew installs Python and <code>fzf</code>. Without <code>fzf</code>, or without a terminal on standard input, devps prints a plain table. New to Homebrew? <a href="https://brew.sh/">Install it first</a>.</p>
             <dl class="facts">
               <div><dt>Runs on</dt><dd>macOS only</dd></div>
               <div><dt>Written in</dt><dd>Python</dd></div>
@@ -147,7 +147,7 @@
                   </div>
                   <figcaption class="frame-cap">
                     <code>devps ls</code>
-                    <p>The same rows as a plain table. devps prints this when <code>fzf</code> is missing or the output is not a terminal.</p>
+                    <p>The same rows as a plain table. devps prints this when <code>fzf</code> is missing or standard input is not a terminal.</p>
                   </figcaption>
                 </figure>
                 <figure class="frame" id="frame-stop" data-tab="Stop">
