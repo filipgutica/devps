@@ -16,8 +16,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
-      - run: python3 -m py_compile devps
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
       - name: Verify CLI version
-        run: test "$(./devps --version)" = "$(cat version.txt)"
+        run: test "$(./dist/cli.js --version)" = "$(node -p "require('./package.json').version")"
       # Hosted macOS runners hide sockets from unprivileged lsof, so the smoke test runs as root there.
       - run: sudo --preserve-env=PATH test/smoke.sh
