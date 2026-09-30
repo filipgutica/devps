@@ -3,268 +3,288 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>
-      devps · Find your local dev servers and the sessions that started them.
-    </title>
-    <meta
-      name="description"
-      content="Find your local dev servers and the sessions that started them."
-    />
+    <meta name="color-scheme" content="light dark" />
+    <title>devps: manage local dev servers on macOS</title>
+    <meta name="description" content="Manage local dev servers on macOS. See what started each one, jump back to its terminal or app, or stop the whole job." />
     <meta property="og:title" content="devps" />
-    <meta
-      property="og:description"
-      content="Find your local dev servers and the sessions that started them."
-    />
+    <meta property="og:description" content="Manage local dev servers on macOS. See what started each one, jump back to its terminal or app, or stop the whole job." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://filipgutica.github.io/devps/" />
     <link rel="canonical" href="https://filipgutica.github.io/devps/" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233d63dd'/%3E%3Ctext x='16' y='23' font-family='ui-monospace,Menlo,monospace' font-size='20' font-weight='700' text-anchor='middle' fill='white'%3Ed%3C/text%3E%3C/svg%3E"
+    />
+    <script>
+      document.documentElement.classList.add("js");
+      try {
+        const theme = localStorage.getItem("tool-site-theme");
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch {
+        /* The system theme works without storage. */
+      }
+    </script>
     <link rel="stylesheet" href="./tokens.css" />
     <link rel="stylesheet" href="./style.css" />
-    <script src="./site.js" defer></script>
+    <script src="./site.js" defer onerror="document.documentElement.classList.remove('js')"></script>
+    <noscript><style>html .appearance[hidden], html [data-copy][hidden] { display: none !important; } html .menu-toggle { display: flex; }</style></noscript>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
     <div class="page">
       <header class="site-header">
-        <nav class="tool-nav" aria-label="Tools">
-          <a href="https://filipgutica.github.io/annoterm/">annoterm</a
-          ><a href="https://filipgutica.github.io/wtree/">wtree</a
-          ><a href="https://filipgutica.github.io/devps/" aria-current="page"
-            >devps</a
-          >
+        <details class="site-menu" data-site-menu>
+        <summary class="menu-toggle" aria-controls="site-menu-links">
+          <svg class="menu-open-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          <svg class="menu-close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg>
+          Menu
+        </summary>
+        <div class="nav-content" id="site-menu-links">
+        <nav class="family" aria-label="Tools">
+          <a href="https://filipgutica.github.io/annoterm/">annoterm</a>
+          <a href="https://filipgutica.github.io/wtree/">wtree</a>
+          <a href="https://filipgutica.github.io/devps/" aria-current="page">devps</a>
+          <a href="https://filipgutica.github.io/t3code/">workbench</a>
         </nav>
-        <div class="segmented" role="group" aria-label="Color theme" hidden>
-          <button type="button" data-theme-choice="system" aria-pressed="true">
-            System
-          </button>
-          <button type="button" data-theme-choice="light" aria-pressed="false">
-            Light
-          </button>
-          <button type="button" data-theme-choice="dark" aria-pressed="false">
-            Dark
-          </button>
+        <nav class="section-nav" aria-label="On this page">
+          <a href="#install">Install</a>
+          <a href="#commands-title">Commands</a>
+          <a href="#keys-title">Keys in the picker</a>
+          <a href="#limits-title">Good to know</a>
+        </nav>
+        <div class="appearance" hidden>
+          <span class="appearance-label">Appearance</span>
+          <div class="theme-switch" role="group" aria-label="Color theme" data-choice="system">
+            <button type="button" data-theme-choice="light" aria-pressed="false" aria-label="Light theme" title="Light"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button>
+<button type="button" data-theme-choice="system" aria-pressed="true" aria-label="System theme" title="System"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button>
+<button type="button" data-theme-choice="dark" aria-pressed="false" aria-label="Dark theme" title="Dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 13.5A9 9 0 0 1 10.5 3a9 9 0 1 0 10 10.5Z"/></svg></button>
+          </div>
+          <span class="theme-choice-label" data-theme-label>System</span>
         </div>
+        </div>
+        </details>
+        <script>document.querySelector("[data-site-menu]").open = !matchMedia("(max-width: 800px)").matches;</script>
       </header>
       <main id="main">
-        <div class="opening">
-          <section class="intro" aria-labelledby="title">
+        <div>
+          <section class="hero" aria-labelledby="title">
             <h1 id="title">devps</h1>
-            <p class="tagline">Find the server. Get back to work.</p>
-            <p class="lede">
-              Ports, projects, and the sessions that started them. Built for
-              macOS.
-            </p>
-            <div class="actions">
-              <a class="btn primary" href="#install">Install with Homebrew</a
-              ><a class="btn" href="https://github.com/filipgutica/devps"
-                >View source</a
-              >
+            <p class="tagline">What is running, who started it, and how to stop it.</p>
+            <p class="lede">devps manages local dev servers on macOS. It shows one row per job, with ports, project, origin, and age. Jump back to where a server started, open its URL, or stop the whole job.</p>
+            <div id="install" class="prompt" data-copy-scope>
+              <span class="sigil" aria-hidden="true">$</span>
+              <code data-copy-text>brew install filipgutica/tap/devps</code>
+              <button class="btn primary" type="button" data-copy hidden aria-label="Copy install command">Copy</button>
             </div>
-            <p class="meta">macOS only · Python · MIT license</p>
+            <p class="hint">Homebrew installs Python and <code>fzf</code>. Without <code>fzf</code>, or without a terminal on standard input, devps prints a plain table. New to Homebrew? <a href="https://brew.sh/">Install it first</a>.</p>
+            <dl class="facts">
+              <div><dt>Runs on</dt><dd>macOS only</dd></div>
+              <div><dt>Written in</dt><dd>Python</dd></div>
+              <div><dt>License</dt><dd>MIT</dd></div>
+              <div><dt>Source</dt><dd><a href="https://github.com/filipgutica/devps">filipgutica/devps</a></dd></div>
+            </dl>
           </section>
-          <figure class="preview">
-            <a
-              href="./preview.png"
-              aria-label="Open full devps terminal preview"
-              ><img
-                src="./preview.png"
-                width="750"
-                height="400"
-                alt="devps showing port, origin, and process details for an isolated demo server."
-                fetchpriority="high"
-            /></a>
-            <figcaption>
-              Actual tool capture with demo data. Select to view full size.
-            </figcaption>
-          </figure>
+          <section class="stage wide" data-stage aria-label="devps in use">
+            <div class="stage-head">
+              <div class="tabs" data-tabs hidden aria-label="Steps"></div>
+              <p class="stage-label">Demo servers started for this capture. Captured from devps 0.1.1.</p>
+            </div>
+            <div class="stage-body">
+              <div class="frames">
+                <figure class="frame" id="frame-pick" data-tab="Pick">
+                  <h3 class="frame-title">Pick</h3>
+                  <div class="term-wrap" tabindex="0" role="region" aria-label="Terminal capture: Pick">
+<pre class="term" role="img" aria-label="The devps picker listing three demo dev servers, with a preview of the first one below the list." data-cols="120"><span class="tbold" style="color:#87afd7">&gt;</span>
+  <span style="color:#afaf87">3/3</span> <span style="color:#afaf87">(0)</span> <span style="color:#5f5f5f">─────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+  <span style="color:#87afaf">enter</span> <span style="color:#87afaf">jump</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-o</span> <span style="color:#87afaf">browser</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-x</span> <span style="color:#87afaf">stop</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">tab</span> <span style="color:#87afaf">multi-select</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-r</span> <span style="color:#87afaf">refresh</span>
+  <span style="color:#87afaf">PORTS</span>        <span style="color:#87afaf">PROJECT</span>                            <span style="color:#87afaf">COMMAND</span>        <span style="color:#87afaf">ORIGIN</span>                               <span style="color:#87afaf">AGE</span>  <span style="color:#87afaf">PID</span>
+<span style="color:#d7005f;background:#303030">▌</span><span style="background:#303030"> </span><span class="tf2 tbold" style="background:#303030">:4273 :8188</span><span class="tbold" style="color:#e4e4e4;background:#303030">  </span><span class="tf6 tbold" style="background:#303030">demo-shop [feature-cart] apps/web</span><span class="tbold" style="color:#e4e4e4;background:#303030">  pnpm dev       Claude Code 3f9a1c2e · Warp          12m  50339</span>
+<span style="color:#303030">▌</span> <span class="tf2 tbold">:5173</span>        <span class="tf6">demo-docs</span>                          vite           Claude Code 7b20d4e1 · Warp          <span class="tf-dim">7m</span>   <span class="tf-dim">56319</span>
+<span style="color:#303030">▌</span> <span class="tf2 tbold">:6006</span>        <span class="tf6">demo-shop</span> <span class="tf6">apps/storybook</span>           storybook dev  <span class="tf3"><i>⚠</i></span> <span class="tf3">orphaned,</span> <span class="tf3">was</span> <span class="tf3">Codex</span> <span class="tf3">thread</span> <span class="tf3">01a07b5e</span>  <span class="tf-dim">2m</span>   <span class="tf-dim">76954</span>
+
+
+
+
+
+
+<span style="color:#5f5f5f">╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</span>
+<span style="color:#5f5f5f">│</span> <span class="tbold">:4273</span> <span class="tbold">:8188</span>  <span class="tf6">demo-shop</span> <span class="tf6">[feature-cart]</span> <span class="tf6">apps/web</span>  <span class="tf-dim">12m</span> <span class="tf-dim">old</span>                                                         <span class="tf-bg" style="background:#afaf87">1/23</span><span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">origin</span>  Claude Code 3f9a1c2e · Warp                                                                                 <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">jump</span>    Warp tab (exact)                                                                                            <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">cwd</span>     ~/demo-projects/worktrees/feature-cart/apps/web                                                             <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">cmd</span>     node ../../node_modules/.bin/pnpm dev                                                                        <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span>                                                                                                                      <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">launched</span> <span class="tf-dim">by</span> <span class="tf-dim">(nearest</span> <span class="tf-dim">first)</span>                                                                                          <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span>    50336 bash                                                                                                        <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span>    91626 claude  <span class="tf-dim">ttys012</span>                                                                                             <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span>    15529 zsh  <span class="tf-dim">ttys012</span>                                                                                                <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</span></pre>
+                  </div>
+                  <figcaption class="frame-cap">
+                    <code>devps</code>
+                    <p>One row per job. The preview shows the origin, the jump target, the working directory, and the chain of processes that launched it.</p>
+                  </figcaption>
+                </figure>
+                <figure class="frame" id="frame-orphan" data-tab="Orphaned">
+                  <h3 class="frame-title">Orphaned</h3>
+                  <div class="term-wrap" tabindex="0" role="region" aria-label="Terminal capture: Orphaned">
+<pre class="term" role="img" aria-label="The devps picker with an orphaned Codex thread server selected and its preview showing the jump target and resume command." data-cols="120"><span class="tbold" style="color:#87afd7">&gt;</span>
+  <span style="color:#afaf87">3/3</span> <span style="color:#afaf87">(0)</span> <span style="color:#5f5f5f">─────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+  <span style="color:#87afaf">enter</span> <span style="color:#87afaf">jump</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-o</span> <span style="color:#87afaf">browser</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-x</span> <span style="color:#87afaf">stop</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">tab</span> <span style="color:#87afaf">multi-select</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-r</span> <span style="color:#87afaf">refresh</span>
+  <span style="color:#87afaf">PORTS</span>        <span style="color:#87afaf">PROJECT</span>                            <span style="color:#87afaf">COMMAND</span>        <span style="color:#87afaf">ORIGIN</span>                               <span style="color:#87afaf">AGE</span>  <span style="color:#87afaf">PID</span>
+<span style="color:#303030">▌</span> <span class="tf2 tbold">:4273</span> <span class="tf2 tbold">:8188</span>  <span class="tf6">demo-shop</span> <span class="tf6">[feature-cart]</span> <span class="tf6">apps/web</span>  pnpm dev       Claude Code 3f9a1c2e · Warp          <span class="tf-dim">12m</span>  <span class="tf-dim">50339</span>
+<span style="color:#303030">▌</span> <span class="tf2 tbold">:5173</span>        <span class="tf6">demo-docs</span>                          vite           Claude Code 7b20d4e1 · Warp          <span class="tf-dim">7m</span>   <span class="tf-dim">56319</span>
+<span style="color:#d7005f;background:#303030">▌</span><span style="background:#303030"> </span><span class="tf2 tbold" style="background:#303030">:6006      </span><span class="tbold" style="color:#e4e4e4;background:#303030">  </span><span class="tf6 tbold" style="background:#303030">demo-shop apps/storybook         </span><span class="tbold" style="color:#e4e4e4;background:#303030">  storybook dev  </span><span class="tf3 tbold" style="background:#303030"><i>⚠</i> orphaned, was Codex thread 01a07b5e</span><span class="tbold" style="color:#e4e4e4;background:#303030">  2m   76954</span>
+
+
+
+
+
+
+<span style="color:#5f5f5f">╭──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</span>
+<span style="color:#5f5f5f">│</span> <span class="tbold">:6006</span>  <span class="tf6">demo-shop</span> <span class="tf6">apps/storybook</span>  <span class="tf-dim">2m</span> <span class="tf-dim">old</span>                                                                         <span class="tf-bg" style="background:#afaf87">1/15</span><span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">origin</span>  <span class="tf3">orphaned,</span> <span class="tf3">was</span> <span class="tf3">Codex</span> <span class="tf3">thread</span> <span class="tf3">01a07b5e</span>                                                                         <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">jump</span>    focus Codex app (thread may be gone)  (+ copies `codex resume 01a07b5e-4c92-47d3-b0f8-5e1a9c7d3268`)        <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">cwd</span>     ~/demo-projects/demo-shop/apps/storybook                                                                    <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">cmd</span>     node ../../node_modules/.bin/storybook dev                                                                  <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span>                                                                                                                     <span style="color:#5f5f5f">││</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">launched</span> <span class="tf-dim">by</span> <span class="tf-dim">(nearest</span> <span class="tf-dim">first)</span>                                                                                          <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span>        1 launchd                                                                                                     <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span>                                                                                                                      <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">│</span> <span class="tf-dim">listeners</span>                                                                                                            <span style="color:#5f5f5f">│</span>
+<span style="color:#5f5f5f">╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</span></pre>
+                  </div>
+                  <figcaption class="frame-cap">
+                    <code>Down, Down</code>
+                    <p>A server whose launcher is gone is marked <code>⚠ orphaned</code>. devps still knows which agent thread started it, and jumping copies the resume command.</p>
+                  </figcaption>
+                </figure>
+                <figure class="frame" id="frame-list" data-tab="List">
+                  <h3 class="frame-title">List</h3>
+                  <div class="term-wrap" tabindex="0" role="region" aria-label="Terminal capture: List">
+<pre class="term" role="img" aria-label="The same three demo servers as a plain table." data-cols="120"><span class="tf-dim">PORTS</span>        <span class="tf-dim">PROJECT</span>                            <span class="tf-dim">COMMAND</span>        <span class="tf-dim">ORIGIN</span>                               <span class="tf-dim">AGE</span>  <span class="tf-dim">PID</span>
+<span class="tf2 tbold">:4273</span> <span class="tf2 tbold">:8188</span>  <span class="tf6">demo-shop</span> <span class="tf6">[feature-cart]</span> <span class="tf6">apps/web</span>  pnpm dev       Claude Code 3f9a1c2e · Warp          <span class="tf-dim">12m</span>  <span class="tf-dim">50339</span>
+<span class="tf2 tbold">:5173</span>        <span class="tf6">demo-docs</span>                          vite           Claude Code 7b20d4e1 · Warp          <span class="tf-dim">7m</span>   <span class="tf-dim">56319</span>
+<span class="tf2 tbold">:6006</span>        <span class="tf6">demo-shop</span> <span class="tf6">apps/storybook</span>           storybook dev  <span class="tf3"><i>⚠</i></span> <span class="tf3">orphaned,</span> <span class="tf3">was</span> <span class="tf3">Codex</span> <span class="tf3">thread</span> <span class="tf3">01a07b5e</span>  <span class="tf-dim">2m</span>   <span class="tf-dim">76954</span></pre>
+                  </div>
+                  <figcaption class="frame-cap">
+                    <code>devps ls</code>
+                    <p>The same rows as a plain table. devps prints this when <code>fzf</code> is missing or standard input is not a terminal.</p>
+                  </figcaption>
+                </figure>
+                <figure class="frame" id="frame-stop" data-tab="Stop">
+                  <h3 class="frame-title">Stop</h3>
+                  <div class="term-wrap" tabindex="0" role="region" aria-label="Terminal capture: Stop">
+<pre class="term" role="img" aria-label="devps listing the processes it would stop for port 5173 and asking for confirmation." data-cols="120">Stop <span class="tbold">:5173</span> <span class="tf6">demo-docs</span>
+  <span class="tf-dim">1</span> <span class="tf-dim">processes:</span> <span class="tf-dim">56319</span> <span class="tf-dim">node</span>
+  Proceed? [y/N]</pre>
+                  </div>
+                  <figcaption class="frame-cap">
+                    <code>devps kill 5173</code>
+                    <p>Shows the processes it will stop, then asks. <code>-y</code> skips the question.</p>
+                  </figcaption>
+                </figure>
+              </div>
+              <aside class="legend" aria-labelledby="legend-title">
+                <h3 id="legend-title">On screen</h3>
+                <dl style="--cols: 3">
+                  <div><dt>PORTS</dt><dd>Every port the job listens on.</dd></div>
+                  <div><dt>PROJECT</dt><dd>Repository, then <code>[worktree]</code> and subfolder when they differ.</dd></div>
+                  <div><dt>COMMAND</dt><dd>The runner, such as <code>pnpm dev</code>.</dd></div>
+                  <div><dt>ORIGIN</dt><dd>The terminal, editor, or agent that started it. <code>⚠ orphaned</code> means that launcher is gone.</dd></div>
+                  <div><dt>AGE</dt><dd>How long the job has been running.</dd></div>
+                  <div><dt>PID</dt><dd>The job's root process.</dd></div>
+                </dl>
+              </aside>
+            </div>
+          </section>
         </div>
-        <section id="install" aria-labelledby="install-title">
-          <h2 id="install-title">Install</h2>
-          <div class="example">
-            <div class="code">
-              <div class="code-head">
-                <span>Homebrew</span
-                ><button
-                  class="btn ghost"
-                  type="button"
-                  data-copy
-                  hidden
-                  aria-label="Copy homebrew command"
-                >
-                  Copy
-                </button>
-              </div>
-              <pre
-                tabindex="0"
-                aria-label="Homebrew command"
-              ><code>brew install filipgutica/tap/devps</code></pre>
-            </div>
-            <p class="copy-status" role="status"></p>
-            <p class="note">
-              Homebrew installs Python and fzf. devps supports macOS only.
-            </p>
-          </div>
-          <p class="note">
-            Install <a href="https://brew.sh/">Homebrew</a> first if the brew
-            command is unavailable. See the
-            <a href="https://github.com/filipgutica/devps#quick-start"
-              >README</a
-            >
-            for installation details.
-          </p>
-        </section>
-        <section aria-labelledby="workflow-title">
-          <h2 id="workflow-title">Get back to the right session</h2>
-          <div class="examples">
-            <div class="example">
-              <div class="example-copy">
-                <h3>List running servers</h3>
-                <p class="note">
-                  Get a plain table with one row per job, including jobs that
-                  listen on several ports.
-                </p>
-              </div>
-              <div class="code">
-                <div class="code-head">
-                  <span>Command</span
-                  ><button
-                    class="btn ghost"
-                    type="button"
-                    data-copy
-                    hidden
-                    aria-label="Copy list running servers command"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <pre
-                  tabindex="0"
-                  aria-label="List running servers command"
-                ><code>devps ls</code></pre>
-              </div>
-              <p class="copy-status" role="status"></p>
-            </div>
-            <div class="example">
-              <div class="example-copy">
-                <h3>Open the picker</h3>
-                <p class="note">
-                  Press Enter to jump, Ctrl+O to open in the browser, or Ctrl+X
-                  to review stopping a job.
-                </p>
-              </div>
-              <div class="code">
-                <div class="code-head">
-                  <span>Command</span
-                  ><button
-                    class="btn ghost"
-                    type="button"
-                    data-copy
-                    hidden
-                    aria-label="Copy open the picker command"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <pre
-                  tabindex="0"
-                  aria-label="Open the picker command"
-                ><code>devps</code></pre>
-              </div>
-              <p class="copy-status" role="status"></p>
-            </div>
-            <div class="example">
-              <div class="example-copy">
-                <h3>Jump to a server</h3>
-                <p class="note">
-                  Use a listening port or PID from the list. devps focuses the
-                  terminal, editor, or agent app that started it.
-                </p>
-              </div>
-              <div class="code">
-                <div class="code-head">
-                  <span>Command</span
-                  ><button
-                    class="btn ghost"
-                    type="button"
-                    data-copy
-                    hidden
-                    aria-label="Copy jump to a server command"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <pre
-                  tabindex="0"
-                  aria-label="Jump to a server command"
-                ><code>devps jump 5173</code></pre>
-              </div>
-              <p class="copy-status" role="status"></p>
-            </div>
-          </div>
-        </section>
-        <section aria-labelledby="reference-title">
-          <h2 id="reference-title">Keep these close</h2>
-          <dl class="reference">
-            <dt><code>devps open 5173</code></dt>
-            <dd>Open the server in your browser.</dd>
-            <dt><code>devps kill 5173</code></dt>
-            <dd>Stop the job and its children after confirmation.</dd>
-            <dt><code>devps --all</code></dt>
-            <dd>Include every TCP listener, beyond dev runtimes.</dd>
-            <dt><code>Tab / Ctrl+R</code></dt>
-            <dd>Multi-select or refresh in the picker.</dd>
-          </dl>
-          <p class="note">
-            Jump precision depends on the origin: terminal tabs and panes can be
-            targeted; editor and agent origins may focus an app or window.
-            Stopping sends SIGTERM, then SIGKILL to survivors after three
-            seconds.
-          </p>
-          <div class="actions">
-            <a class="btn" href="https://github.com/filipgutica/devps#readme"
-              >Read the full reference</a
-            >
-          </div>
-        </section>
-        <section aria-labelledby="related-title">
-          <h2 id="related-title">More tools for local work</h2>
-          <ul class="related">
-            <li>
-              <a href="https://filipgutica.github.io/annoterm/"
-                ><code>annoterm</code></a
-              >
-              <p>
-                Review Markdown in the terminal. Send precise feedback to your
-                coding agent.
-              </p>
-            </li>
-            <li>
-              <a href="https://filipgutica.github.io/wtree/"
-                ><code>wtree</code></a
-              >
-              <p>
-                See your Git worktrees, their pull requests, and what is ready
-                to clean up.
-              </p>
-            </li>
+        <section class="split" aria-labelledby="commands-title">
+          <header>
+            <h2 id="commands-title">Commands</h2>
+            <p>A port matches first, then a job's root PID or a listener PID.</p>
+          </header>
+          <ul class="rows">
+            <li class="row" data-copy-scope><div class="cmd"><code data-copy-text>devps</code><button class="btn ghost" type="button" data-copy hidden aria-label="Copy picker command">Copy</button></div><p>Open the interactive picker.</p></li>
+            <li class="row" data-copy-scope><div class="cmd"><code data-copy-text>devps ls</code><button class="btn ghost" type="button" data-copy hidden aria-label="Copy list command">Copy</button></div><p>Print the plain table.</p></li>
+            <li class="row" data-copy-scope><div class="cmd"><code data-copy-text>devps jump 5173</code><button class="btn ghost" type="button" data-copy hidden aria-label="Copy jump command">Copy</button></div><p>Focus the terminal, editor, or agent app that started the server.</p></li>
+            <li class="row" data-copy-scope><div class="cmd"><code data-copy-text>devps open 5173</code><button class="btn ghost" type="button" data-copy hidden aria-label="Copy open command">Copy</button></div><p>Open <code>http://localhost:5173</code> in the browser.</p></li>
+            <li class="row" data-copy-scope><div class="cmd"><code data-copy-text>devps kill 5173</code><button class="btn ghost" type="button" data-copy hidden aria-label="Copy kill command">Copy</button></div><p>Stop the whole job after you confirm. Add <code>-y</code> to skip the question.</p></li>
+            <li class="row" data-copy-scope><div class="cmd"><code data-copy-text>devps --all</code><button class="btn ghost" type="button" data-copy hidden aria-label="Copy all command">Copy</button></div><p>Include every TCP listener, not only dev runtimes.</p></li>
           </ul>
-          <p class="note">
-            All three tools are available from
-            <a href="https://github.com/filipgutica/homebrew-tap"
-              >Filip’s Homebrew tap</a
-            >.
-          </p>
+        </section>
+        <section class="split narrow" aria-labelledby="keys-title">
+          <header>
+            <h2 id="keys-title">Keys in the picker</h2>
+            <p>The header line in the picker lists these too.</p>
+          </header>
+          <ul class="rows">
+            <li class="row"><kbd>Enter</kbd><p>Jump to the selected server's origin.</p></li>
+            <li class="row"><kbd>Ctrl+O</kbd><p>Open its URL in the browser.</p></li>
+            <li class="row"><kbd>Ctrl+X</kbd><p>Stop the selected jobs after confirmation.</p></li>
+            <li class="row"><kbd>Tab</kbd><p>Select several jobs.</p></li>
+            <li class="row"><kbd>Ctrl+R</kbd><p>Refresh the list.</p></li>
+          </ul>
+        </section>
+        <section class="split" aria-labelledby="jump-title">
+          <header>
+            <h2 id="jump-title">Where jump lands</h2>
+            <p>Exact tab or pane selection depends on the origin information available.</p>
+          </header>
+          <div class="scroll">
+            <table class="data">
+              <thead><tr><th scope="col">Origin</th><th scope="col">Jump target</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Warp, iTerm2, Terminal, tmux</th><td>The tab or pane, when the matching session information is available.</td></tr>
+                <tr><th scope="row">VS Code</th><td>The window for that folder. It cannot select the terminal tab.</td></tr>
+                <tr><th scope="row">Codex app, T3 Code Workbench, Claude app</th><td>The app. It copies <code>codex resume &lt;id&gt;</code> or <code>claude --resume &lt;id&gt;</code> when the session is known.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section class="split" aria-labelledby="limits-title">
+          <header>
+            <h2 id="limits-title">Good to know</h2>
+          </header>
+          <div class="text-rows">
+            <p><strong>Stop is careful.</strong> devps sends <code>SIGTERM</code> to the job root and its children, then <code>SIGKILL</code> to survivors after three seconds. It protects GUI apps, PID 1, and the terminal or agent that runs devps.</p>
+            <p><strong>Only a fixed list of environment variables is read.</strong> To find the origin of an orphaned job, devps reads hints such as <code>WARP_FOCUS_URL</code> and <code>CODEX_THREAD_ID</code>. It does not print, store, or pass on other values.</p>
+            <p><strong>The default filter can hide compiled servers outside your home directory.</strong> Use <code>--all</code> to include every TCP listener.</p>
+            <p><strong>macOS only.</strong> devps uses macOS <code>ps</code>, <code>lsof</code>, <code>open</code>, <code>osascript</code>, and <code>pbcopy</code>. Some origins support app focus only, so it cannot always return to an exact tab or conversation.</p>
+            <nav class="links" aria-label="Documentation">
+              <a href="https://github.com/filipgutica/devps#readme">Full reference</a>
+              <a href="https://github.com/filipgutica/devps/blob/main/docs/ARCHITECTURE.md">Architecture</a>
+            </nav>
+          </div>
+        </section>
+        <section class="split" aria-labelledby="family-title">
+          <header>
+            <h2 id="family-title">Also from Filip</h2>
+            <p>The three terminal tools install from <a href="https://github.com/filipgutica/homebrew-tap">one Homebrew tap</a>.</p>
+          </header>
+          <ul class="rows narrow">
+            <li class="row"><a href="https://filipgutica.github.io/annoterm/"><code>annoterm</code></a><p>Review Markdown in the terminal and send your comments to a coding agent as precise feedback.</p></li>
+            <li class="row"><a href="https://filipgutica.github.io/wtree/"><code>wtree</code></a><p>List Git worktrees with age and pull request state, then clean up the finished ones.</p></li>
+            <li class="row"><a href="https://filipgutica.github.io/t3code/"><code>Workbench</code></a><p>Plan across repositories, organize tickets, and start agent threads in worktrees.</p></li>
+          </ul>
         </section>
       </main>
       <footer>
-        <a href="https://github.com/filipgutica">Built by Filip Gutica</a
-        ><a href="https://github.com/filipgutica/devps/issues"
-          >Report an issue</a
-        ><a href="https://github.com/filipgutica/devps/releases">Releases</a
-        ><a href="https://github.com/filipgutica/devps/blob/main/LICENSE"
-          >MIT license</a
-        >
+        <a href="https://github.com/filipgutica">Built by Filip Gutica</a>
+        <nav aria-label="Project links">
+          <a href="https://github.com/filipgutica/devps/issues">Report an issue</a>
+          <a href="https://github.com/filipgutica/devps/releases">Releases</a>
+        </nav>
       </footer>
     </div>
+    <dialog class="menu-drawer" id="site-menu-drawer" aria-labelledby="drawer-title">
+      <div class="drawer-head">
+        <span id="drawer-title">Navigation</span>
+        <button class="drawer-close" type="button" aria-label="Close menu" autofocus>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6"/></svg>
+        </button>
+      </div>
+    </dialog>
+    <p id="copy-status" class="visually-hidden" role="status"></p>
   </body>
 </html>
