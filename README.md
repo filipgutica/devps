@@ -4,7 +4,7 @@ Find local dev servers, see what started them, and jump back to their terminal o
 
 [![Release](https://img.shields.io/github/v/release/filipgutica/devps?color=2563eb)](https://github.com/filipgutica/devps/releases)
 [![CI](https://github.com/filipgutica/devps/actions/workflows/ci.yml/badge.svg)](https://github.com/filipgutica/devps/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-000000?logo=python)](devps)
+[![TypeScript](https://img.shields.io/badge/TypeScript-000000?logo=typescript)](src/cli.ts)
 [![macOS](https://img.shields.io/badge/platform-macOS-555555)](docs/ARCHITECTURE.md#platform)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -35,7 +35,7 @@ devps ls
 devps
 ```
 
-The Homebrew formula installs Python and `fzf`. Without `fzf`, or without a terminal on standard input, devps prints the table instead.
+`fzf` provides the interactive picker. Without it, or without a terminal on standard input, devps prints the table instead.
 
 ## Commands
 
@@ -94,11 +94,17 @@ See [the architecture guide](docs/ARCHITECTURE.md) for process grouping, origin 
 
 ## Development and releases
 
-Run the smoke test from a checkout:
+Build and check the CLI with Node 22 or newer:
 
 ```sh
-test/smoke.sh   # starts a throwaway server, lists it, stops it
+npm ci
+npm run typecheck
+npm test       # builds and checks the compiled CLI against process snapshots
+npm run smoke # starts a throwaway runner and child server, lists them, stops them
 ```
+
+The TypeScript build runs compiled JavaScript with Node. It has no runtime npm dependencies.
+CI runs these checks on macOS, including the real process smoke test.
 
 Releases use Release Please with Conventional Commit PR titles: `fix:` creates a patch release; `feat:` creates a minor release.
 

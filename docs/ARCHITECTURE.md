@@ -1,6 +1,8 @@
 # devps architecture
 
-devps is one Python script with no dependencies outside the standard library. Each run takes a fresh snapshot of the machine with `lsof` and `ps`, groups listening processes into jobs, labels where each job came from, and then lists, focuses, or stops those jobs. devps keeps no state between runs.
+devps is written in TypeScript and compiled to JavaScript for Node 22 or newer. It uses the Node standard library and has no runtime npm dependencies. Each run takes a fresh snapshot of the machine with `lsof` and `ps`, groups listening processes into jobs, labels where each job came from, and then lists, focuses, or stops those jobs. devps keeps no state between runs.
+
+The source separates process discovery and grouping (`src/processes.ts`), origin and jump plans (`src/origin.ts`), table and preview output (`src/presentation.ts`), actions and stop safeguards (`src/actions.ts`), subprocess support (`src/system.ts`), and command routing with the picker (`src/cli.ts`).
 
 ```
 lsof (listening TCP ports) ─┐
@@ -10,13 +12,14 @@ ps -E (allowlisted env keys)┘
 
 ## Snapshot
 
-devps reads the system with four commands. It runs each as one batched call, not one call per process.
+devps reads the system with five commands. It runs each as one batched call, not one call per process.
 
 | Command | What devps takes from it |
 | --- | --- |
 | `ps -axo pid=,ppid=,tty=,etime=,comm=` | The full process table: parent links, terminal, age, and executable path |
 | `lsof -nP -iTCP -sTCP:LISTEN -Fpn` | Each process that listens on a TCP port, and its ports. IPv4 and IPv6 rows for one port merge into one. |
 | `lsof -a -d cwd -p <pids> -Fpn` | The working directory of each job root and listener |
+| `ps -ww -o pid=,args= -p <pids>` | The command arguments of each job root and listener |
 | `ps -wwE -o pid=,command= -p <roots>` | The environment of each job root, filtered to the allowlist in [Origin](#origin) |
 
 A failed `ps` or `lsof` call stops devps with the tool's error. Exit code 1 with no error output means "nothing matched" and is not a failure.
@@ -111,7 +114,7 @@ Codex, Claude, and T3 Code register URL schemes (`codex://`, `claude://`, `t3cod
 
 `devps ls`, `jump`, `open`, and `kill` take a port or a PID. devps matches a port first, then a job root PID or listener PID.
 
-The picker is `fzf`. Each row carries its job root PID in a hidden first field. The preview (`devps _preview <root>`) and the picker actions look up jobs by that root PID only, so a port number that equals another job's PID cannot select the wrong job. `ctrl-r` reloads the rows with `devps _lines`.
+The picker is `fzf`. Each row carries its job root PID and encoded executable identity in two hidden fields. The preview (`devps _preview <root>`) and the picker actions look up jobs by that root PID only, so a port number that equals another job's PID cannot select the wrong job. `ctrl-r` reloads the rows with `devps _lines`. Actions refresh the jobs after selection to resolve newly reloaded rows. Every stop compares the displayed row's executable identity against a fresh process table before signaling it, including rows introduced by a reload.
 
 Without `fzf`, or without a terminal on standard input, `devps` prints the `ls` table.
 
