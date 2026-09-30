@@ -42,10 +42,10 @@ async function ui(showAll: boolean): Promise<void> {
     const result = spawnSync('fzf', [
       '--ansi', '--multi', '--layout=reverse', '--height=90%', '--no-sort',
       '--delimiter=\t', '--with-nth=3..', '--header-lines=1',
-      '--header=ctrl-u/d details  ·  enter jump  ·  ctrl-o browser  ·  ctrl-x stop  ·  tab multi-select  ·  ctrl-r refresh',
+      '--header=ctrl-↑/↓ details  ·  enter jump  ·  ctrl-o browser  ·  ctrl-x stop  ·  tab multi-select  ·  ctrl-r refresh',
       '--expect=enter,ctrl-o,ctrl-x', '--preview', `${self} _preview {1}`, '--preview-window=down,50%,wrap',
       '--bind', `ctrl-r:reload(${self} _lines)`,
-      '--bind', 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down,pgup:preview-page-up,pgdn:preview-page-down',
+      '--bind', 'ctrl-up:preview-up,ctrl-down:preview-down,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down,pgup:preview-page-up,pgdn:preview-page-down',
     ], { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'inherit'], env: { ...process.env, DEVPS_COLOR: '1' } });
     if (result.error) throw new Error(`devps: fzf failed: ${result.error.message}`);
     const output = result.stdout.trimEnd().split('\n');
