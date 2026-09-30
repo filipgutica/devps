@@ -42,7 +42,7 @@ async function ui(showAll: boolean): Promise<void> {
     const result = spawnSync('fzf', [
       '--ansi', '--multi', '--layout=reverse', '--height=90%', '--no-sort',
       '--delimiter=\t', '--with-nth=3..', '--header-lines=1',
-      '--header=enter jump  ·  ctrl-o browser  ·  ctrl-x stop  ·  tab multi-select  ·  ctrl-r refresh  ·  pgup/pgdn details',
+      '--header=pgup/pgdn details  ·  enter jump  ·  ctrl-o browser  ·  ctrl-x stop  ·  tab multi-select  ·  ctrl-r refresh',
       '--expect=enter,ctrl-o,ctrl-x', '--preview', `${self} _preview {1}`, '--preview-window=down,50%,wrap',
       '--bind', `ctrl-r:reload(${self} _lines)`,
       '--bind', 'pgup:preview-page-up,pgdn:preview-page-down',
