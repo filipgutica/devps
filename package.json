@@ -1,11 +1,17 @@
 {
   "name": "devps",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Find local dev servers, see what started them, and jump back to their terminal or app.",
   "type": "module",
-  "bin": { "devps": "dist/cli.js" },
-  "files": ["dist"],
-  "engines": { "node": ">=22" },
+  "bin": {
+    "devps": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json && chmod +x dist/cli.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -13,5 +19,8 @@
     "smoke": "test/smoke.sh",
     "prepublishOnly": "npm run build"
   },
-  "devDependencies": { "@types/node": "^22.10.0", "typescript": "^5.7.0" }
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
 }
