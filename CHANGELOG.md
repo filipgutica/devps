@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0](https://github.com/filipgutica/devps/compare/v0.2.0...v0.3.0) (2026-10-04)
+
+
+### Features
+
+* start the picker in browse mode ([#10](https://github.com/filipgutica/devps/issues/10)) ([17c3c24](https://github.com/filipgutica/devps/commit/17c3c2424c09baabc1740b24c883362986d49b3a))
+
+
+### Bug Fixes
+
+* clear search before returning to browse mode ([#12](https://github.com/filipgutica/devps/issues/12)) ([6364e10](https://github.com/filipgutica/devps/commit/6364e10ba83a4d5d2f43c3b1d157def07d1ef52c))
+
 ## [0.2.0](https://github.com/filipgutica/devps/compare/v0.1.1...v0.2.0) (2026-09-30)
 
 
