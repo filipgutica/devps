@@ -57,7 +57,7 @@ async function ui(showAll: boolean): Promise<void> {
       '--bind', 'q:abort,ctrl-o:print(ctrl-o)+accept,ctrl-x:print(ctrl-x)+accept',
       '--bind', `/:show-input+unbind(/,q)+change-header(${searchHeader})`,
       '--bind', `enter:transform:if [ "$FZF_INPUT_STATE" = enabled ]; then printf '%s' ${shellQuote(browse)}; else printf '%s' 'print(enter)+accept'; fi`,
-      '--bind', `esc:transform:if [ "$FZF_INPUT_STATE" = enabled ]; then printf '%s' ${shellQuote(`clear-query+${browse}`)}; else printf '%s' abort; fi`,
+      '--bind', `esc:clear-query+transform:if [ "$FZF_INPUT_STATE" = enabled ]; then printf '%s' ${shellQuote(browse)}; else printf '%s' abort; fi`,
       '--bind', 'ctrl-up:preview-up,ctrl-down:preview-down,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down,pgup:preview-page-up,pgdn:preview-page-down',
     ], { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'inherit'], env: { ...process.env, DEVPS_COLOR: '1' } });
     if (result.error) throw new Error(`devps: fzf failed: ${result.error.message}`);

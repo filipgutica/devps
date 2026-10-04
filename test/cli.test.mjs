@@ -234,16 +234,22 @@ for (const { key, action, expected } of [
 }
 
 test('picker Escape clears search and q quits from browse mode without an action', { skip: !realFzf }, async () => {
-  const result = await interactiveCli(pickerFixture, async ({ child, waitFor, waitForExit }) => {
+  const result = await interactiveCli(pickerFixture, async ({ child, waitFor, waitForExit, output }) => {
     await waitFor(/PORTS/g);
+    const searchStart = output().length;
     child.stdin.write('/zzzzzz');
-    await waitFor(/0\/2/g);
+    await waitFor(/enter keep filter/g, 1, searchStart);
+    await waitFor(/0\/2/g, 1, searchStart);
+    const clearStart = output().length;
     child.stdin.write('\x1b');
-    await waitFor(/\/ search/g, 2);
+    await waitFor(/\/ search/g, 1, clearStart);
+    const reopenStart = output().length;
     child.stdin.write('/');
-    await waitFor(/2\/2/g);
+    await waitFor(/enter keep filter/g, 1, reopenStart);
+    await waitFor(/2\/2/g, 1, reopenStart);
+    const browseStart = output().length;
     child.stdin.write('\x1b');
-    await waitFor(/\/ search/g, 3);
+    await waitFor(/\/ search/g, 1, browseStart);
     child.stdin.write('q');
     await waitForExit();
   });
