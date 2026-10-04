@@ -21,6 +21,10 @@ if (command === 'ps') {
   if (fixture.git) console.log(args.includes('--git-common-dir') ? '/repo/.git' : '/repo');
   else process.exitCode = 1;
 } else if (command === 'fzf') {
+  if (args.includes('--version')) {
+    console.log(fixture.fzfVersion ?? '0.66.0');
+    process.exit(0);
+  }
   if (fixture.stopRoots || fixture.pickKey === 'ctrl-x') {
     const countPath = process.env.DEVPS_FZF_CALLS;
     const calls = existsSync(countPath) ? Number(readFileSync(countPath, 'utf8')) : 0;

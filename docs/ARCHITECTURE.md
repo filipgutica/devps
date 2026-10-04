@@ -116,7 +116,11 @@ Codex, Claude, and T3 Code register URL schemes (`codex://`, `claude://`, `t3cod
 
 The picker is `fzf`. Each row carries its job root PID and encoded executable identity in two hidden fields. The preview (`devps _preview <root>`) and the picker actions look up jobs by that root PID only, so a port number that equals another job's PID cannot select the wrong job. `ctrl-r` reloads the rows with `devps _lines`. Actions refresh the jobs after selection to resolve newly reloaded rows. Every stop compares the displayed row's executable identity against a fresh process table before signaling it, including rows introduced by a reload.
 
-Without `fzf`, or without a terminal on standard input, `devps` prints the `ls` table.
+The picker requires `fzf` 0.66 or newer, including support for the existing Ctrl-arrow preview shortcuts. It starts with its input hidden and disabled. `/` shows the input and unbinds the browse-only `/` and `q` shortcuts so both characters can appear in a query. `Enter` hides the input, keeps the filter visible in the header, and restores the browse shortcuts. `Esc` also clears the query. In browse mode, `Enter` jumps and `q` or `Esc` quits. Action bindings print their action key before accepting the rows, so command routing receives the same output as before. The Ctrl shortcuts and multi-selection remain available in both modes.
+
+Picker commands run through `/bin/sh`, so their POSIX shell syntax does not depend on the user's login shell.
+
+Without a supported `fzf`, or without a terminal on standard input, `devps` prints the `ls` table. An older or unrecognized `fzf` version also produces an upgrade message.
 
 ## Platform
 
