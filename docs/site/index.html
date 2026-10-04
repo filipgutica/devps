@@ -76,7 +76,7 @@
               <code data-copy-text>brew install filipgutica/tap/devps</code>
               <button class="btn primary" type="button" data-copy hidden aria-label="Copy install command">Copy</button>
             </div>
-            <p class="hint"><code>fzf</code> provides the interactive picker. Without it, or without a terminal on standard input, devps prints a plain table. New to Homebrew? <a href="https://brew.sh/">Install it first</a>.</p>
+            <p class="hint"><code>fzf</code> 0.66 or newer provides the interactive picker. Without a supported version, or without a terminal on standard input, devps prints a plain table. New to Homebrew? <a href="https://brew.sh/">Install it first</a>.</p>
             <dl class="facts">
               <div><dt>Runs on</dt><dd>macOS only</dd></div>
               <div><dt>Written in</dt><dd>TypeScript</dd></div>
@@ -87,16 +87,17 @@
           <section class="stage wide" data-stage aria-label="devps in use">
             <div class="stage-head">
               <div class="tabs" data-tabs hidden aria-label="Steps"></div>
-              <p class="stage-label">Demo servers started for this capture. Captured from devps 0.1.1.</p>
+              <p class="stage-label">Demo server output from devps 0.1.1, with picker controls updated for browse mode.</p>
             </div>
             <div class="stage-body">
               <div class="frames">
                 <figure class="frame" id="frame-pick" data-tab="Pick">
                   <h3 class="frame-title">Pick</h3>
                   <div class="term-wrap" tabindex="0" role="region" aria-label="Terminal capture: Pick">
-<pre class="term" role="img" aria-label="The devps picker listing three demo dev servers, with a preview of the first one below the list." data-cols="120"><span class="tbold" style="color:#87afd7">&gt;</span>
+<pre class="term" role="img" aria-label="The devps picker listing three demo dev servers, with a preview of the first one below the list." data-cols="120">
   <span style="color:#afaf87">3/3</span> <span style="color:#afaf87">(0)</span> <span style="color:#5f5f5f">─────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-  <span style="color:#87afaf">enter</span> <span style="color:#87afaf">jump</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-o</span> <span style="color:#87afaf">browser</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-x</span> <span style="color:#87afaf">stop</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">tab</span> <span style="color:#87afaf">multi-select</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-r</span> <span style="color:#87afaf">refresh</span>
+  <span style="color:#87afaf">/ search  ·  q / esc quit  ·  enter jump  ·</span>  <span style="color:#87afaf">ctrl-o</span> <span style="color:#87afaf">browser</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-x</span> <span style="color:#87afaf">stop</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">tab</span> <span style="color:#87afaf">multi-select</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-r</span> <span style="color:#87afaf">refresh</span>
+  <span style="color:#87afaf">ctrl-↑/↓ details</span>
   <span style="color:#87afaf">PORTS</span>        <span style="color:#87afaf">PROJECT</span>                            <span style="color:#87afaf">COMMAND</span>        <span style="color:#87afaf">ORIGIN</span>                               <span style="color:#87afaf">AGE</span>  <span style="color:#87afaf">PID</span>
 <span style="color:#d7005f;background:#303030">▌</span><span style="background:#303030"> </span><span class="tf2 tbold" style="background:#303030">:4273 :8188</span><span class="tbold" style="color:#e4e4e4;background:#303030">  </span><span class="tf6 tbold" style="background:#303030">demo-shop [feature-cart] apps/web</span><span class="tbold" style="color:#e4e4e4;background:#303030">  pnpm dev       Claude Code 3f9a1c2e · Warp          12m  50339</span>
 <span style="color:#303030">▌</span> <span class="tf2 tbold">:5173</span>        <span class="tf6">demo-docs</span>                          vite           Claude Code 7b20d4e1 · Warp          <span class="tf-dim">7m</span>   <span class="tf-dim">56319</span>
@@ -128,9 +129,10 @@
                 <figure class="frame" id="frame-orphan" data-tab="Orphaned">
                   <h3 class="frame-title">Orphaned</h3>
                   <div class="term-wrap" tabindex="0" role="region" aria-label="Terminal capture: Orphaned">
-<pre class="term" role="img" aria-label="The devps picker with an orphaned Codex thread server selected and its preview showing the jump target and resume command." data-cols="120"><span class="tbold" style="color:#87afd7">&gt;</span>
+<pre class="term" role="img" aria-label="The devps picker with an orphaned Codex thread server selected and its preview showing the jump target and resume command." data-cols="120">
   <span style="color:#afaf87">3/3</span> <span style="color:#afaf87">(0)</span> <span style="color:#5f5f5f">─────────────────────────────────────────────────────────────────────────────────────────────────────────────</span>
-  <span style="color:#87afaf">enter</span> <span style="color:#87afaf">jump</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-o</span> <span style="color:#87afaf">browser</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-x</span> <span style="color:#87afaf">stop</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">tab</span> <span style="color:#87afaf">multi-select</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-r</span> <span style="color:#87afaf">refresh</span>
+  <span style="color:#87afaf">/ search  ·  q / esc quit  ·  enter jump  ·</span>  <span style="color:#87afaf">ctrl-o</span> <span style="color:#87afaf">browser</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-x</span> <span style="color:#87afaf">stop</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">tab</span> <span style="color:#87afaf">multi-select</span>  <span style="color:#87afaf">·</span>  <span style="color:#87afaf">ctrl-r</span> <span style="color:#87afaf">refresh</span>
+  <span style="color:#87afaf">ctrl-↑/↓ details</span>
   <span style="color:#87afaf">PORTS</span>        <span style="color:#87afaf">PROJECT</span>                            <span style="color:#87afaf">COMMAND</span>        <span style="color:#87afaf">ORIGIN</span>                               <span style="color:#87afaf">AGE</span>  <span style="color:#87afaf">PID</span>
 <span style="color:#303030">▌</span> <span class="tf2 tbold">:4273</span> <span class="tf2 tbold">:8188</span>  <span class="tf6">demo-shop</span> <span class="tf6">[feature-cart]</span> <span class="tf6">apps/web</span>  pnpm dev       Claude Code 3f9a1c2e · Warp          <span class="tf-dim">12m</span>  <span class="tf-dim">50339</span>
 <span style="color:#303030">▌</span> <span class="tf2 tbold">:5173</span>        <span class="tf6">demo-docs</span>                          vite           Claude Code 7b20d4e1 · Warp          <span class="tf-dim">7m</span>   <span class="tf-dim">56319</span>
@@ -169,7 +171,7 @@
                   </div>
                   <figcaption class="frame-cap">
                     <code>devps ls</code>
-                    <p>The same rows as a plain table. devps prints this when <code>fzf</code> is missing or standard input is not a terminal.</p>
+                    <p>The same rows as a plain table. devps prints this when a supported <code>fzf</code> is unavailable or standard input is not a terminal.</p>
                   </figcaption>
                 </figure>
                 <figure class="frame" id="frame-stop" data-tab="Stop">
@@ -216,14 +218,19 @@
         <section class="split narrow" aria-labelledby="keys-title">
           <header>
             <h2 id="keys-title">Keys in the picker</h2>
-            <p>The header line in the picker lists these too.</p>
+            <p>The picker starts in browse mode. Press <kbd>/</kbd> to search. While searching, <code>q</code> and <code>/</code> are ordinary text.</p>
           </header>
           <ul class="rows">
-            <li class="row"><kbd>Enter</kbd><p>Jump to the selected server's origin.</p></li>
+            <li class="row"><kbd>/</kbd><p>Edit the search filter.</p></li>
+            <li class="row"><kbd>q</kbd><p>Quit from browse mode.</p></li>
+            <li class="row"><kbd>Enter</kbd><p>While searching, keep the filter and return to browsing. The active filter appears in the header. From browse mode, jump to the selected server's origin.</p></li>
+            <li class="row"><kbd>Esc</kbd><p>While searching, clear the filter and return to browsing. From browse mode, quit.</p></li>
             <li class="row"><kbd>Ctrl+O</kbd><p>Open its URL in the browser.</p></li>
             <li class="row"><kbd>Ctrl+X</kbd><p>Stop the selected jobs after confirmation.</p></li>
             <li class="row"><kbd>Tab</kbd><p>Select several jobs.</p></li>
             <li class="row"><kbd>Ctrl+R</kbd><p>Refresh the list.</p></li>
+            <li class="row"><kbd>Ctrl+↑ / Ctrl+↓</kbd><p>Scroll details. The Ctrl shortcuts and multi-selection work in both modes.</p></li>
+            <li class="row"><kbd>Ctrl+C</kbd><p>Quit from either mode.</p></li>
           </ul>
         </section>
         <section class="split" aria-labelledby="jump-title">
