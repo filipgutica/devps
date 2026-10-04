@@ -21,6 +21,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Install fzf for picker keyboard tests
+        run: brew install fzf
       - run: npm run typecheck
       - run: npm test
       - name: Verify CLI version

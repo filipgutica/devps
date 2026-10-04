@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { byRoot, collect, find, type Job, type ProcessTable } from './processes.js';
 import { dim, preview, rows } from './presentation.js';
 import { closeInput, jump, openBrowser, prompt, stop } from './actions.js';
-import { shellQuote, which } from './system.js';
+import { run, shellQuote, which } from './system.js';
 
 const HELP = `devps: list local dev servers, show where they came from, jump to them, or stop them.
 
@@ -34,7 +34,16 @@ function pickerInput(jobs: Job[], table: ProcessTable): string {
 
 async function ui(showAll: boolean): Promise<void> {
   if (!which('fzf') || !process.stdin.isTTY) return ls(showAll);
+  const version = run(['fzf', '--version']).match(/^(\d+)\.(\d+)\./);
+  if (!version || (Number(version[1]) === 0 && Number(version[2]) < 66)) {
+    console.error('devps: the interactive picker requires fzf 0.66 or newer. Upgrade fzf; showing the plain table.');
+    return ls(showAll);
+  }
   const self = `DEVPS_COLOR=1 ${shellQuote(process.execPath)} ${shellQuote(fileURLToPath(import.meta.url))}${showAll ? ' --all' : ''}`;
+  const actions = 'ctrl-o browser  ·  ctrl-x stop  ·  tab multi-select  ·  ctrl-r refresh\nctrl-↑/↓ details';
+  const browseHeader = `/ search  ·  q / esc quit  ·  enter jump  ·  ${actions}`;
+  const searchHeader = `enter keep filter  ·  esc clear filter  ·  ${actions}`;
+  const browse = `hide-input+rebind(/,q)+transform-header(printf '%s' ${shellQuote(browseHeader)}; if [ -n "$FZF_QUERY" ]; then printf '\\nfilter: %s' "$FZF_QUERY"; fi)`;
   while (true) {
     const { jobs, table } = collect(showAll);
     if (!jobs.length) { console.log('No dev servers running.'); return; }
@@ -42,9 +51,13 @@ async function ui(showAll: boolean): Promise<void> {
     const result = spawnSync('fzf', [
       '--ansi', '--multi', '--layout=reverse', '--height=90%', '--no-sort',
       '--delimiter=\t', '--with-nth=3..', '--header-lines=1',
-      '--header=ctrl-↑/↓ details  ·  enter jump  ·  ctrl-o browser  ·  ctrl-x stop  ·  tab multi-select  ·  ctrl-r refresh',
-      '--expect=enter,ctrl-o,ctrl-x', '--preview', `${self} _preview {1}`, '--preview-window=down,50%,wrap',
+      '--no-input', '--prompt=/ ', '--with-shell=/bin/sh -c', `--header=${browseHeader}`,
+      '--preview', `${self} _preview {1}`, '--preview-window=down,50%,wrap',
       '--bind', `ctrl-r:reload(${self} _lines)`,
+      '--bind', 'q:abort,ctrl-o:print(ctrl-o)+accept,ctrl-x:print(ctrl-x)+accept',
+      '--bind', `/:show-input+unbind(/,q)+change-header(${searchHeader})`,
+      '--bind', `enter:transform:if [ "$FZF_INPUT_STATE" = enabled ]; then printf '%s' ${shellQuote(browse)}; else printf '%s' 'print(enter)+accept'; fi`,
+      '--bind', `esc:transform:if [ "$FZF_INPUT_STATE" = enabled ]; then printf '%s' ${shellQuote(`clear-query+${browse}`)}; else printf '%s' abort; fi`,
       '--bind', 'ctrl-up:preview-up,ctrl-down:preview-down,ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down,pgup:preview-page-up,pgdn:preview-page-down',
     ], { input, encoding: 'utf8', stdio: ['pipe', 'pipe', 'inherit'], env: { ...process.env, DEVPS_COLOR: '1' } });
     if (result.error) throw new Error(`devps: fzf failed: ${result.error.message}`);

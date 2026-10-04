@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { spawn, spawnSync } from 'node:child_process';
-import { closeSync, mkdtempSync, openSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { closeSync, existsSync, mkdtempSync, openSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { delimiter, resolve } from 'node:path';
 import { test } from 'node:test';
 
 const fixtureCommand = resolve('test/fixtures/command.mjs');
 const entry = resolve(process.env.DEVPS ?? 'dist/cli.js');
+const realFzf = spawnSync('which', ['fzf'], { encoding: 'utf8' }).stdout.trim();
 const base = {
   table: '1 0 ?? 01:00 /sbin/launchd\n100 1 ?? 01:00 /Applications/Warp.app/Contents/MacOS/stable\n101 100 ttys001 01:00 /bin/zsh\n200 101 ttys001 01:00 /opt/homebrew/bin/node\n201 200 ttys001 01:00 /opt/homebrew/bin/node\n202 200 ttys001 01:00 /opt/homebrew/bin/node',
   listeners: 'p201\nn*:5173\nn[::1]:5173\np202\nn*:8080',
@@ -122,41 +123,133 @@ test('picker preview and action resolve a new job after ctrl-r reload', () => {
   assert.deepEqual(result.actions.filter(action => action.command === 'open'), [{ command: 'open', args: ['http://localhost:6000'], input: '' }]);
 });
 
+test('picker with an older fzf prints the table and explains how to enable the UI', () => {
+  const result = cli([], { ...base, fzfVersion: '0.65.2' }, '', true);
+  assert.equal(result.status, 0, result.stdout + result.stderr);
+  assert.match(result.stdout, /PORTS[\s\S]*:5173 :8080/);
+  assert.match(result.stdout + result.stderr, /requires fzf 0\.66 or newer/);
+  assert.deepEqual(result.actions, []);
+});
+
 async function interactiveCli(fixture, interact) {
   const directory = mkdtempSync(resolve(tmpdir(), 'devps-picker-input-'));
-  for (const command of ['ps', 'lsof', 'git', 'fzf']) symlinkSync(fixtureCommand, resolve(directory, command));
+  for (const command of ['ps', 'lsof', 'git', 'fzf', 'open']) {
+    symlinkSync(command === 'fzf' && fixture.realPicker ? realFzf : fixtureCommand, resolve(directory, command));
+  }
   // cat gives script a regular pipe: macOS script rejects Node's socket-backed stdin pipe.
-  const child = spawn('/bin/sh', ['-c', 'cat | /usr/bin/script -q /dev/null "$1"', 'devps-input-test', entry], {
-    env: { ...process.env, DEVPS_COLOR: '0', PATH: directory + delimiter + process.env.PATH,
+  const child = spawn('/bin/sh', ['-c', 'cat | /usr/bin/script -q /dev/null /bin/sh -c \'stty rows 36 cols 180 && exec "$1"\' devps-input-test "$1"', 'devps-input-test', entry], {
+    detached: true,
+    env: { ...process.env, DEVPS_COLOR: '0', TERM: 'xterm-256color', FZF_DEFAULT_OPTS: '', FZF_DEFAULT_OPTS_FILE: '', PATH: directory + delimiter + process.env.PATH,
       DEVPS_FIXTURE: JSON.stringify(fixture), DEVPS_CALLS: resolve(directory, 'calls'),
       DEVPS_FZF_CALLS: resolve(directory, 'fzf-calls'), DEVPS_ACTIONS: resolve(directory, 'actions') },
   });
   let output = '';
   const updates = new Set();
-  child.stdout.on('data', data => { output += data; for (const update of updates) update(); });
+  child.stdout.on('data', data => {
+    output += data;
+    if (fixture.realPicker && data.includes('\x1b[6n')) child.stdin.write('\x1b[1;1R');
+    for (const update of updates) update();
+  });
   child.stderr.on('data', data => { output += data; for (const update of updates) update(); });
   const finished = new Promise(resolve => child.on('close', code => resolve(code)));
-  const waitFor = (pattern, count = 1) => new Promise((resolve, reject) => {
-    const timer = setTimeout(() => { updates.delete(check); reject(new Error(`Timed out waiting for ${pattern}: ${output}`)); }, 5000);
+  const waitFor = (pattern, count = 1, start = 0) => new Promise((resolve, reject) => {
+    const timer = setTimeout(() => { updates.delete(check); reject(new Error(`Timed out waiting for ${pattern}: ${output.slice(-2000)}`)); }, 5000);
     const check = () => {
-      if ((output.match(pattern) ?? []).length >= count) { clearTimeout(timer); updates.delete(check); resolve(); }
+      if ((output.slice(start).match(pattern) ?? []).length >= count) { clearTimeout(timer); updates.delete(check); resolve(); }
     };
     updates.add(check);
     check();
   });
+  const waitForExit = async () => {
+    child.stdin.end();
+    let timer;
+    try {
+      return await Promise.race([finished, new Promise((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`Picker did not exit after the action: ${output.slice(-2000)}`)), 5000);
+      })]);
+    } finally { clearTimeout(timer); }
+  };
   try {
-    await interact({ child, waitFor, output: () => output, directory });
+    await interact({ child, waitFor, waitForExit, output: () => output, directory });
     child.stdin.end();
     const exitTimeout = setTimeout(() => child.kill(), 5000);
     const status = await finished;
     clearTimeout(exitTimeout);
-    return { status, stdout: output, pickerCalls: readFileSync(resolve(directory, 'fzf-calls'), 'utf8') };
+    const calls = resolve(directory, 'fzf-calls'), actions = resolve(directory, 'actions');
+    return { status, stdout: output,
+      pickerCalls: existsSync(calls) ? readFileSync(calls, 'utf8') : '',
+      actions: existsSync(actions) ? readFileSync(actions, 'utf8').trim().split('\n').map(JSON.parse) : [] };
   } finally {
+    if (child.exitCode === null) {
+      try { process.kill(-child.pid, 'SIGTERM'); }
+      catch (error) { if (error.code !== 'ESRCH') throw error; }
+      await Promise.race([finished, new Promise(resolve => setTimeout(resolve, 1000))]);
+    }
     child.stdin.destroy();
     child.kill();
     rmSync(directory, { recursive: true, force: true });
   }
 }
+
+const pickerFixture = { ...base, realPicker: true,
+  table: base.table + '\n300 101 ttys001 01:00 /opt/homebrew/bin/node',
+  listeners: base.listeners + '\np300\nn*:6000',
+  env: base.env + '\n300 node WARP_FOCUS_URL=warp://session/6000' };
+
+test('picker q quits on startup without an action', { skip: !realFzf }, async () => {
+  const result = await interactiveCli(pickerFixture, async ({ child, waitFor, waitForExit }) => {
+    await waitFor(/PORTS/g);
+    child.stdin.write('q');
+    await waitForExit();
+  });
+  assert.equal(result.status, 0, result.stdout);
+  assert.deepEqual(result.actions, []);
+});
+
+for (const { key, action, expected } of [
+  { key: '\x0f', action: 'browser', expected: 'http://localhost:6000' },
+  { key: '\r', action: 'jump', expected: 'warp://session/6000' },
+]) {
+  test(`picker search accepts q and / as text; Enter keeps the filter for ${action} actions`, { skip: !realFzf }, async () => {
+    const result = await interactiveCli(pickerFixture, async ({ child, waitFor, waitForExit, output }) => {
+      await waitFor(/PORTS/g);
+      const start = output().length;
+      child.stdin.write('zzzzzz/');
+      await waitFor(/2\/2/g, 1, start);
+      child.stdin.write('q/');
+      await waitFor(/0\/2/g);
+      child.stdin.write('\r');
+      await waitFor(/filter: q\//g);
+      child.stdin.write('/\x7f\x7f' + '6000');
+      await waitFor(/1\/2/g);
+      child.stdin.write('\r');
+      await waitFor(/\/ search/g, 3);
+      await waitFor(/filter: 6000/g);
+      child.stdin.write(key);
+      await waitForExit();
+    });
+    assert.equal(result.status, 0, result.stdout);
+    assert.deepEqual(result.actions, [{ command: 'open', args: [expected], input: '' }]);
+  });
+}
+
+test('picker Escape clears search and q quits from browse mode without an action', { skip: !realFzf }, async () => {
+  const result = await interactiveCli(pickerFixture, async ({ child, waitFor, waitForExit }) => {
+    await waitFor(/PORTS/g);
+    child.stdin.write('/zzzzzz');
+    await waitFor(/0\/2/g);
+    child.stdin.write('\x1b');
+    await waitFor(/\/ search/g, 2);
+    child.stdin.write('/');
+    await waitFor(/2\/2/g);
+    child.stdin.write('\x1b');
+    await waitFor(/\/ search/g, 3);
+    child.stdin.write('q');
+    await waitForExit();
+  });
+  assert.equal(result.status, 0, result.stdout);
+  assert.deepEqual(result.actions, []);
+});
 
 test('picker accepts sequential stop confirmations and waits for enter before returning', async () => {
   const first = 2147483646, second = 2147483645;

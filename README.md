@@ -35,7 +35,7 @@ devps ls
 devps
 ```
 
-`fzf` provides the interactive picker. Without it, or without a terminal on standard input, devps prints the table instead.
+`fzf` 0.66 or newer provides the interactive picker. Without a supported version, or without a terminal on standard input, devps prints the table instead.
 
 ## Commands
 
@@ -54,13 +54,20 @@ Commands match a port first, then a job root PID or listener PID.
 
 ### Picker controls
 
+The picker starts in browse mode. Press `/` to search. `Enter` keeps the filter and returns to browsing; the active filter appears in the header. `Esc` clears the filter and returns to browsing. While searching, `q` and `/` are ordinary text.
+
 | Key | Action |
 | --- | --- |
-| `Enter` | Jump to the selected server's origin |
+| `/` | Edit the search filter |
+| `q`, `Esc` | Quit from browse mode |
+| `Enter` | Jump to the selected server's origin from browse mode |
 | `Ctrl+O` | Open its URL in the browser |
 | `Ctrl+X` | Stop selected jobs after confirmation |
 | `Tab` | Select multiple jobs |
 | `Ctrl+R` | Refresh the list |
+| `Ctrl+↑` / `Ctrl+↓` | Scroll details |
+
+The Ctrl shortcuts and multi-selection work in both modes. `Ctrl+C` quits from either mode.
 
 ## How it works
 
@@ -102,6 +109,8 @@ npm run typecheck
 npm test       # builds and checks the compiled CLI against process snapshots
 npm run smoke # starts a throwaway runner and child server, lists them, stops them
 ```
+
+Install `fzf` 0.66 or newer to run the real picker keyboard tests. Those tests are skipped when `fzf` is absent.
 
 The TypeScript build runs compiled JavaScript with Node. It has no runtime npm dependencies.
 CI runs these checks on macOS, including the real process smoke test.
