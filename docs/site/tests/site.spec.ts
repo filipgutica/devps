@@ -41,6 +41,37 @@ const expectAtReadingTop = async (page: Page, id: string) => {
     )
     .toBeLessThan(2);
 };
+const expectAtBottom = async (page: Page) => {
+  await expect
+    .poll(() =>
+      page.evaluate(() => document.documentElement.scrollHeight - innerHeight - scrollY),
+    )
+    .toBeLessThan(2);
+};
+const traverseHistory = async ({
+  page,
+  delta,
+  hash,
+}: {
+  page: Page;
+  delta: -1 | 1;
+  hash: string;
+}) => {
+  await page.evaluate(
+    ({ delta, hash }) =>
+      new Promise<void>((resolve) => {
+        // The URL changes before native history scrolling has completed.
+        const onScrollEnd = () => {
+          if (location.hash !== hash) return;
+          document.removeEventListener('scrollend', onScrollEnd);
+          resolve();
+        };
+        document.addEventListener('scrollend', onScrollEnd);
+        history.go(delta);
+      }),
+    { delta, hash },
+  );
+};
 
 for (const width of [320, 390, 768, 801, 1280]) {
   test(`responsive layout and capture sizing at ${width}px`, async ({ page }) => {
@@ -100,13 +131,23 @@ test('native anchor navigation, history, and scroll selection stay independent',
   expect(await page.evaluate(() => history.length)).toBe(historyBeforeScroll);
   await sectionNav.getByRole('link', { name: 'Good to know' }).click();
   await expect(page).toHaveURL(/#limits-title$/);
-  await page.goBack();
+  await expectAtBottom(page);
+  await traverseHistory({ page, delta: -1, hash: '#commands-title' });
   await expect(page).toHaveURL(/#commands-title$/);
-  await page.goForward();
+  await traverseHistory({ page, delta: 1, hash: '#limits-title' });
   await expect(page).toHaveURL(/#limits-title$/);
+  await expectAtBottom(page);
+  await page
+    .locator('#keys-title')
+    .evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
+  await expect(sectionNav.getByRole('link', { name: 'Keys in the picker' })).toHaveAttribute(
+    'aria-current',
+    'location',
+  );
   await page.evaluate(() =>
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }),
   );
+  await expectAtBottom(page);
   await expect(sectionNav.getByRole('link', { name: 'Good to know' })).toHaveAttribute(
     'aria-current',
     'location',
