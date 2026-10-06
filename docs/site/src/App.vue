@@ -87,8 +87,7 @@ onUnmounted(() => {
     <main id="main" ref="main">
       <div>
         <section class="hero" aria-labelledby="title">
-          <h1 id="title">devps</h1>
-          <p class="tagline">What is running, who started it, and how to stop it.</p>
+          <h1 id="title" class="tagline">What is running, who started it, and how to stop it.</h1>
           <p class="lede">
             devps manages local dev servers on macOS. It shows one row per job, with ports, project,
             origin, and age. Jump back to where a server started, open its URL, or stop the whole
