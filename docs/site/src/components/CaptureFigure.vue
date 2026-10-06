@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { UiButton } from '@filipgutica/ui';
 import type { Capture } from '../captures';
 import CapturePreview from './CapturePreview.vue';
 
@@ -14,11 +13,22 @@ const expand = (event: MouseEvent) => {
 
 <template>
   <figure :id="`frame-${capture.id}`" class="frame" :data-tab="capture.label">
-    <CapturePreview
-      :html="capture.html"
-      :label="`Terminal capture: ${capture.label}`"
-      :fit="enhanced"
-    />
+    <div class="capture-preview">
+      <CapturePreview
+        :html="capture.html"
+        :label="`Terminal capture: ${capture.label}`"
+        :fit="enhanced"
+      />
+      <button
+        v-if="enhanced"
+        type="button"
+        class="capture-open"
+        :aria-label="`Expand ${capture.label} capture`"
+        aria-haspopup="dialog"
+        :title="`Open ${capture.label} capture at full size`"
+        @click="expand"
+      />
+    </div>
     <figcaption class="frame-cap">
       <code>{{ capture.command }}</code>
       <p v-if="capture.id === 'pick'">
@@ -36,16 +46,6 @@ const expand = (event: MouseEvent) => {
       <p v-else-if="capture.id === 'stop'">
         Shows the processes it will stop, then asks. <code>-y</code> skips the question.
       </p>
-      <UiButton
-        v-if="enhanced"
-        variant="secondary"
-        size="lg"
-        class="capture-expand"
-        :aria-label="`Expand ${capture.label} capture`"
-        aria-haspopup="dialog"
-        @click="expand"
-        >Expand capture</UiButton
-      >
     </figcaption>
   </figure>
 </template>

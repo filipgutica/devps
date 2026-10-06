@@ -76,6 +76,14 @@ onUnmounted(() => {
   <a class="skip" href="#main">Skip to content</a>
   <div class="page" :data-enhanced="enhanced">
     <SiteNavigation />
+    <header class="page-header">
+      <a class="page-brand" href="/devps/" aria-label="devps home">devps</a>
+      <nav aria-label="Main navigation">
+        <a href="https://github.com/filipgutica/devps/blob/main/README.md">Guide</a>
+        <a href="https://github.com/filipgutica/devps">GitHub</a>
+        <a href="https://github.com/filipgutica/devps/releases">Releases</a>
+      </nav>
+    </header>
     <main id="main" ref="main">
       <div>
         <section class="hero" aria-labelledby="title">
