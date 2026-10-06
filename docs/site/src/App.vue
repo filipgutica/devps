@@ -177,19 +177,20 @@ onUnmounted(() => {
         <ul class="rows">
           <li class="row">
             <div class="cmd">
-              <UiCodeBlock code="devps" language="bash" :copyable="enhanced" :wrap="true" />
+              <UiCodeBlock variant="compact" code="devps" language="bash" :copyable="enhanced" :wrap="true" />
             </div>
             <p>Open the interactive picker.</p>
           </li>
           <li class="row">
             <div class="cmd">
-              <UiCodeBlock code="devps ls" language="bash" :copyable="enhanced" :wrap="true" />
+              <UiCodeBlock variant="compact" code="devps ls" language="bash" :copyable="enhanced" :wrap="true" />
             </div>
             <p>Print the plain table.</p>
           </li>
           <li class="row">
             <div class="cmd">
               <UiCodeBlock
+                variant="compact"
                 code="devps jump 5173"
                 language="bash"
                 :copyable="enhanced"
@@ -201,6 +202,7 @@ onUnmounted(() => {
           <li class="row">
             <div class="cmd">
               <UiCodeBlock
+                variant="compact"
                 code="devps open 5173"
                 language="bash"
                 :copyable="enhanced"
@@ -212,6 +214,7 @@ onUnmounted(() => {
           <li class="row">
             <div class="cmd">
               <UiCodeBlock
+                variant="compact"
                 code="devps kill 5173"
                 language="bash"
                 :copyable="enhanced"
@@ -222,7 +225,7 @@ onUnmounted(() => {
           </li>
           <li class="row">
             <div class="cmd">
-              <UiCodeBlock code="devps --all" language="bash" :copyable="enhanced" :wrap="true" />
+              <UiCodeBlock variant="compact" code="devps --all" language="bash" :copyable="enhanced" :wrap="true" />
             </div>
             <p>Include every TCP listener, not only dev runtimes.</p>
           </li>
