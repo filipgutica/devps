@@ -6,7 +6,10 @@ for (const width of [320, 390, 768, 801, 1280]) {
   }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto('/devps/');
-    await expect(page.getByRole('heading', { name: 'devps', exact: true })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'devps home' })).toBeVisible();
+    await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible();
+    await expect(page.locator('.capture-open')).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'What is running, who started it, and how to stop it.', level: 1 })).toBeVisible();
     await expect(page.locator('#install code')).toHaveText('brew install filipgutica/tap/devps');
     await expect(page.getByRole('tab')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Copy code' })).toHaveCount(0);
