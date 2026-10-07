@@ -81,7 +81,7 @@ for (const width of [320, 390, 768, 801, 1280]) {
     const header = page.locator('.page-header');
     await expect(header.getByRole('link', { name: 'devps home' })).toBeVisible();
     const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toHaveText('What is running, who started it, and how to stop it.');
+    await expect(heading).toHaveText('Find and manage local dev servers.');
     const headerBox = await header.boundingBox();
     const headingBox = await heading.boundingBox();
     const introGap = (headingBox?.y ?? Infinity) - (headerBox?.y ?? 0) - (headerBox?.height ?? 0);

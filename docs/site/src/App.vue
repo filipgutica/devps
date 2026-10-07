@@ -87,25 +87,24 @@ onUnmounted(() => {
     <main id="main" ref="main">
       <div>
         <section class="hero" aria-labelledby="title">
-          <h1 id="title" class="tagline">What is running, who started it, and how to stop it.</h1>
+          <h1 id="title" class="tagline">Find and manage local dev servers.</h1>
           <p class="lede">
-            devps manages local dev servers on macOS. It shows one row per job, with ports, project,
-            origin, and age. Jump back to where a server started, open its URL, or stop the whole
-            job.
+            One row per job: ports, project, origin, and age. Jump to its origin, open its URL,
+            or stop it.
           </p>
           <div id="install" class="install-command">
+            <p class="hint">Install with Homebrew</p>
             <UiCodeBlock
               code="brew install filipgutica/tap/devps"
               language="bash"
-              title="Install with Homebrew"
+              variant="compact"
               :copyable="enhanced"
               :wrap="true"
             />
           </div>
           <p class="hint">
-            <code>fzf</code> 0.66 or newer provides the interactive picker. Without a supported
-            version, or without a terminal on standard input, devps prints a plain table. New to
-            Homebrew? <a href="https://brew.sh/">Install it first</a>.
+            Picker: <code>fzf</code> 0.66+ and terminal input; otherwise, a plain table.
+            <a href="https://brew.sh/">Install Homebrew</a> if needed.
           </p>
           <dl class="facts">
             <div>
@@ -128,7 +127,7 @@ onUnmounted(() => {
         </section>
         <section class="stage wide" aria-label="devps in use">
           <p class="stage-label">
-            Demo server output from devps 0.1.1, with picker controls updated for browse mode.
+            devps 0.1.1 demo output; controls updated for browse mode.
           </p>
           <UiTabs v-model="activeCapture" :items="captureTabs" label="Steps">
             <template #panel="{ value }">
@@ -147,30 +146,29 @@ onUnmounted(() => {
             <dl style="--cols: 3">
               <div>
                 <dt>PORTS</dt>
-                <dd>Every port the job listens on.</dd>
+                <dd>Listening ports.</dd>
               </div>
               <div>
                 <dt>PROJECT</dt>
-                <dd>Repository, then <code>[worktree]</code> and subfolder when they differ.</dd>
+                <dd>Repository; <code>[worktree]</code> and subfolder when different.</dd>
               </div>
               <div>
                 <dt>COMMAND</dt>
-                <dd>The runner, such as <code>pnpm dev</code>.</dd>
+                <dd>Runner, e.g. <code>pnpm dev</code>.</dd>
               </div>
               <div>
                 <dt>ORIGIN</dt>
                 <dd>
-                  The terminal, editor, or agent that started it. <code>⚠ orphaned</code> means that
-                  launcher is gone.
+                  Terminal, editor, or agent. <code>⚠ orphaned</code>: launcher gone.
                 </dd>
               </div>
               <div>
                 <dt>AGE</dt>
-                <dd>How long the job has been running.</dd>
+                <dd>Time running.</dd>
               </div>
               <div>
                 <dt>PID</dt>
-                <dd>The job's root process.</dd>
+                <dd>Job root process.</dd>
               </div>
             </dl>
           </aside>
@@ -179,20 +177,20 @@ onUnmounted(() => {
       <section class="split" aria-labelledby="commands-title">
         <header>
           <h2 id="commands-title">Commands</h2>
-          <p>A port matches first, then a job's root PID or a listener PID.</p>
+          <p>Matches port first, then root or listener PID.</p>
         </header>
         <ul class="rows">
           <li class="row">
             <div class="cmd">
               <UiCodeBlock variant="compact" code="devps" language="bash" :copyable="enhanced" :wrap="true" />
             </div>
-            <p>Open the interactive picker.</p>
+            <p>Interactive picker.</p>
           </li>
           <li class="row">
             <div class="cmd">
               <UiCodeBlock variant="compact" code="devps ls" language="bash" :copyable="enhanced" :wrap="true" />
             </div>
-            <p>Print the plain table.</p>
+            <p>Plain table.</p>
           </li>
           <li class="row">
             <div class="cmd">
@@ -204,7 +202,7 @@ onUnmounted(() => {
                 :wrap="true"
               />
             </div>
-            <p>Focus the terminal, editor, or agent app that started the server.</p>
+            <p>Focus the originating terminal, editor, or agent app.</p>
           </li>
           <li class="row">
             <div class="cmd">
@@ -216,7 +214,7 @@ onUnmounted(() => {
                 :wrap="true"
               />
             </div>
-            <p>Open <code>http://localhost:5173</code> in the browser.</p>
+            <p>Open <code>http://localhost:5173</code>.</p>
           </li>
           <li class="row">
             <div class="cmd">
@@ -228,13 +226,13 @@ onUnmounted(() => {
                 :wrap="true"
               />
             </div>
-            <p>Stop the whole job after you confirm. Add <code>-y</code> to skip the question.</p>
+            <p>Stop the whole job after confirmation; <code>-y</code> skips it.</p>
           </li>
           <li class="row">
             <div class="cmd">
               <UiCodeBlock variant="compact" code="devps --all" language="bash" :copyable="enhanced" :wrap="true" />
             </div>
-            <p>Include every TCP listener, not only dev runtimes.</p>
+            <p>Include all TCP listeners, beyond dev runtimes.</p>
           </li>
         </ul>
       </section>
@@ -242,14 +240,13 @@ onUnmounted(() => {
         <header>
           <h2 id="keys-title">Keys in the picker</h2>
           <p>
-            The picker starts in browse mode. Press <kbd>/</kbd> to search. While searching,
-            <code>q</code> and <code>/</code> are ordinary text.
+            Starts in browse mode. While searching, <code>q</code> and <code>/</code> are text.
           </p>
         </header>
         <ul class="rows">
           <li class="row">
             <kbd>/</kbd>
-            <p>Edit the search filter.</p>
+            <p>Edit the filter.</p>
           </li>
           <li class="row">
             <kbd>q</kbd>
@@ -258,25 +255,24 @@ onUnmounted(() => {
           <li class="row">
             <kbd>Enter</kbd>
             <p>
-              While searching, keep the filter and return to browsing. The active filter appears in
-              the header. From browse mode, jump to the selected server's origin.
+              Search: keep the filter in the header and return to browsing. Browse: jump to origin.
             </p>
           </li>
           <li class="row">
             <kbd>Esc</kbd>
-            <p>While searching, clear the filter and return to browsing. From browse mode, quit.</p>
+            <p>Search: clear the filter and return to browsing. Browse: quit.</p>
           </li>
           <li class="row">
             <kbd>Ctrl+O</kbd>
-            <p>Open its URL in the browser.</p>
+            <p>Open its URL.</p>
           </li>
           <li class="row">
             <kbd>Ctrl+X</kbd>
-            <p>Stop the selected jobs after confirmation.</p>
+            <p>Stop selected jobs after confirmation.</p>
           </li>
           <li class="row">
             <kbd>Tab</kbd>
-            <p>Select several jobs.</p>
+            <p>Select multiple jobs.</p>
           </li>
           <li class="row">
             <kbd>Ctrl+R</kbd>
@@ -284,7 +280,7 @@ onUnmounted(() => {
           </li>
           <li class="row">
             <kbd>Ctrl+↑ / Ctrl+↓</kbd>
-            <p>Scroll details. The Ctrl shortcuts and multi-selection work in both modes.</p>
+            <p>Scroll details. Ctrl shortcuts and multi-selection work in both modes.</p>
           </li>
           <li class="row">
             <kbd>Ctrl+C</kbd>
@@ -295,7 +291,7 @@ onUnmounted(() => {
       <section class="split" aria-labelledby="jump-title">
         <header>
           <h2 id="jump-title">Where jump lands</h2>
-          <p>Exact tab or pane selection depends on the origin information available.</p>
+          <p>Exact targets depend on available origin information.</p>
         </header>
         <div class="scroll">
           <table class="data">
@@ -308,17 +304,17 @@ onUnmounted(() => {
             <tbody>
               <tr>
                 <th scope="row">Warp, iTerm2, Terminal, tmux</th>
-                <td>The tab or pane, when the matching session information is available.</td>
+                <td>Tab or pane when session information matches.</td>
               </tr>
               <tr>
                 <th scope="row">VS Code</th>
-                <td>The window for that folder. It cannot select the terminal tab.</td>
+                <td>Folder's window; cannot select a terminal tab.</td>
               </tr>
               <tr>
                 <th scope="row">Codex app, T3 Code Workbench, Claude app</th>
                 <td>
-                  The app. It copies <code>codex resume &lt;id&gt;</code> or
-                  <code>claude --resume &lt;id&gt;</code> when the session is known.
+                  App; copies <code>codex resume &lt;id&gt;</code> or
+                  <code>claude --resume &lt;id&gt;</code> for known sessions.
                 </td>
               </tr>
             </tbody>
@@ -331,25 +327,25 @@ onUnmounted(() => {
         </header>
         <div class="text-rows">
           <p>
-            <strong>Stop is careful.</strong> devps sends <code>SIGTERM</code> to the job root and
-            its children, then <code>SIGKILL</code> to survivors after three seconds. It protects
-            GUI apps, PID 1, and the terminal or agent that runs devps.
+            <strong>Stopping:</strong> <code>SIGTERM</code> to the root and children;
+            <code>SIGKILL</code> to survivors after three seconds. GUI apps, PID 1, and devps's
+            terminal or agent are protected.
           </p>
           <p>
-            <strong>Only a fixed list of environment variables is read.</strong> To find the origin
-            of an orphaned job, devps reads hints such as <code>WARP_FOCUS_URL</code> and
-            <code>CODEX_THREAD_ID</code>. It does not print, store, or pass on other values.
+            <strong>Orphan origins:</strong> only allowlisted hints such as <code>WARP_FOCUS_URL</code>
+            and <code>CODEX_THREAD_ID</code> are read. Other environment values are never printed,
+            stored, or passed on.
           </p>
           <p>
             <strong
-              >The default filter can hide compiled servers outside your home directory.</strong
+              >Compiled servers outside your home directory may be hidden.</strong
             >
-            Use <code>--all</code> to include every TCP listener.
+            <code>--all</code> includes every TCP listener.
           </p>
           <p>
-            <strong>macOS only.</strong> devps uses macOS <code>ps</code>, <code>lsof</code>,
-            <code>open</code>, <code>osascript</code>, and <code>pbcopy</code>. Some origins support
-            app focus only, so it cannot always return to an exact tab or conversation.
+            <strong>macOS only:</strong> uses <code>ps</code>, <code>lsof</code>, <code>open</code>,
+            <code>osascript</code>, and <code>pbcopy</code>. Some origins allow only app focus,
+            not an exact tab or conversation.
           </p>
           <nav class="links" aria-label="Documentation">
             <a href="https://github.com/filipgutica/devps#readme">Full reference</a>
@@ -363,27 +359,25 @@ onUnmounted(() => {
         <header>
           <h2 id="family-title">Also from Filip</h2>
           <p>
-            The three terminal tools install from
-            <a href="https://github.com/filipgutica/homebrew-tap">one Homebrew tap</a>.
+            <a href="https://github.com/filipgutica/homebrew-tap">Homebrew tap</a>
           </p>
         </header>
         <ul class="rows narrow">
           <li class="row">
             <a href="https://filipgutica.github.io/annoterm/"><code>annoterm</code></a>
             <p>
-              Review Markdown in the terminal and send your comments to a coding agent as precise
-              feedback.
+              Markdown review and agent feedback.
             </p>
           </li>
           <li class="row">
             <a href="https://filipgutica.github.io/wtree/"><code>wtree</code></a>
             <p>
-              List Git worktrees with age and pull request state, then clean up the finished ones.
+              Git worktree status and cleanup.
             </p>
           </li>
           <li class="row">
             <a href="https://filipgutica.github.io/t3code/"><code>Workbench</code></a>
-            <p>Plan across repositories, organize tickets, and start agent threads in worktrees.</p>
+            <p>Tickets and agent threads across repositories.</p>
           </li>
         </ul>
       </section>
