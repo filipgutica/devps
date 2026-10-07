@@ -94,10 +94,11 @@ onUnmounted(() => {
             job.
           </p>
           <div id="install" class="install-command">
+            <p class="hint">Install with Homebrew</p>
             <UiCodeBlock
               code="brew install filipgutica/tap/devps"
               language="bash"
-              title="Install with Homebrew"
+              variant="compact"
               :copyable="enhanced"
               :wrap="true"
             />
