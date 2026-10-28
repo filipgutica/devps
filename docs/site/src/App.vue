@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { UiAlert, UiBadge, UiCard, UiCodeBlock } from '@filipgutica/ui';
+import { UiBadge, UiCard, UiCodeBlock } from '@filipgutica/ui';
 import { UiCapture, UiCommandList, UiSiteHeader, UiSiteNav } from '@filipgutica/ui/site';
 import { captures } from './captures';
 
@@ -227,6 +227,11 @@ const keys = [
           command-header="Key"
           description-header="What it does"
         >
+          <template #command="{ item }">
+            <template v-for="(key, index) in item.command.split(' / ')" :key="key">
+              <template v-if="index > 0"> / </template><kbd>{{ key }}</kbd>
+            </template>
+          </template>
           <template #description="{ item }">
             <template v-if="item.command === 'Ctrl+↑ / Ctrl+↓'"
               >Scroll details. <kbd>Ctrl</kbd> shortcuts and multi-selection work in both
@@ -284,14 +289,8 @@ const keys = [
             <code>CODEX_THREAD_ID</code> are read. Other environment values are never printed,
             stored, or passed on.
           </dd>
-        </dl>
-        <UiAlert tone="info">
-          <p>
-            <strong>Compiled servers outside your home directory may be hidden.</strong>
-            <code>--all</code> includes every TCP listener.
-          </p>
-        </UiAlert>
-        <dl class="fg-site-definitions notes">
+          <dt>Compiled servers outside your home directory may be hidden.</dt>
+          <dd><code>--all</code> includes every TCP listener.</dd>
           <dt>macOS only</dt>
           <dd>
             Uses <code>ps</code>, <code>lsof</code>, <code>open</code>, <code>osascript</code>, and

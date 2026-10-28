@@ -31,58 +31,59 @@
   --site-capture-bg: var(--t-bg);
   --site-nav-width: 14rem;
 }
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: var(--space-6);
-}
-body {
-  margin: 0;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font: var(--text-md) / var(--leading) var(--font-ui);
-  -webkit-font-smoothing: antialiased;
-}
-h1,
-h2,
-h3,
-p,
-dl,
-dd,
-figure {
-  margin: 0;
-}
-h1,
-h2,
-h3 {
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-tight);
-  text-wrap: balance;
-}
-h1 {
-  max-width: 22ch;
-  font-size: var(--text-3xl);
-  letter-spacing: var(--tracking-tight);
-}
-h2 {
-  font-size: var(--text-xl);
-}
-p {
-  max-width: var(--measure);
-}
-code,
-kbd,
-pre {
-  font-family: var(--font-mono);
-}
-code {
-  font-size: 0.93em;
-}
+/* Element defaults sit in the base layer so library component styles, such as the nav label, win. */
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--space-6);
+  }
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: var(--text-md) / var(--leading) var(--font-ui);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  p,
+  dl,
+  dd,
+  figure {
+    margin: 0;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-tight);
+    text-wrap: balance;
+  }
+  h1 {
+    max-width: 22ch;
+    font-size: var(--text-3xl);
+    letter-spacing: var(--tracking-tight);
+  }
+  h2 {
+    font-size: var(--text-xl);
+  }
+  p {
+    max-width: var(--measure);
+  }
+  code,
+  kbd,
+  pre {
+    font-family: var(--font-mono);
+  }
+  code {
+    font-size: 0.93em;
+  }
   a {
     color: var(--color-link);
     text-underline-offset: 0.18em;
@@ -225,6 +226,10 @@ footer {
 }
 footer a {
   color: var(--color-muted);
+  text-decoration: none;
+}
+footer a:hover {
+  text-decoration: underline;
 }
 @media (max-width: 800px) {
   .page {
