@@ -116,12 +116,12 @@ for (const width of [320, 390, 768, 801, 1280]) {
     await expect(heading).toHaveText('Find and manage local dev servers.');
     // The local Menu sits below the shared header at <=800px, and the section
     // rail sits beside the intro on desktop.
-    const introAnchor = page.locator(width <= 800 ? '.site-header' : '.page-header');
+    const introAnchor = page.locator(width <= 800 ? '.fg-site-rail' : '.page-header');
     const anchorBox = await introAnchor.boundingBox();
     const headingBox = await heading.boundingBox();
     const introGap = (headingBox?.y ?? Infinity) - (anchorBox?.y ?? 0) - (anchorBox?.height ?? 0);
     expect(introGap).toBeGreaterThanOrEqual(0);
-    expect(introGap).toBeLessThanOrEqual(width <= 640 ? 20 : 28);
+    expect(introGap).toBeLessThanOrEqual(width <= 800 ? 24 : 32);
     const siteLinks = header.getByRole('navigation', { name: 'Site links' });
     await expect(siteLinks.getByRole('link', { name: 'Guide', exact: true })).toHaveAttribute(
       'href', 'https://github.com/filipgutica/devps/blob/main/README.md',
@@ -133,12 +133,12 @@ for (const width of [320, 390, 768, 801, 1280]) {
       'href', 'https://github.com/filipgutica/devps/releases',
     );
     await expect(header.getByRole('button', { name: 'System theme', exact: true })).toHaveAttribute('aria-pressed', 'true');
-    const command = page.locator('.cmd .fg-code-block').first();
-    const copy = command.getByRole('button', { name: 'Copy code' });
-    const blockBox = await command.boundingBox();
-    const codeBox = await command.locator('pre').boundingBox();
+    const install = page.locator('#install .fg-code-block');
+    const copy = install.getByRole('button', { name: 'Copy code' });
+    const blockBox = await install.boundingBox();
     const copyBox = await copy.boundingBox();
-    expect(blockBox?.height ?? Infinity).toBeLessThanOrEqual(60);
+    const codeBox = await install.locator('pre').boundingBox();
+    expect(blockBox?.height ?? Infinity).toBeLessThanOrEqual(width <= 640 ? 64 : 60);
     expect(copyBox?.width ?? 0).toBeGreaterThanOrEqual(44);
     expect(copyBox?.height ?? 0).toBeGreaterThanOrEqual(44);
     expect(
@@ -147,14 +147,25 @@ for (const width of [320, 390, 768, 801, 1280]) {
           ((copyBox?.y ?? 0) + (copyBox?.height ?? 0) / 2),
       ),
     ).toBeLessThan(2);
-    for (const block of await page.locator('.cmd .fg-code-block').all()) {
-      const preBox = await block.locator('pre').boundingBox();
-      const buttonBox = await block.getByRole('button', { name: 'Copy code' }).boundingBox();
-      expect((preBox?.x ?? 0) + (preBox?.width ?? 0)).toBeLessThanOrEqual((buttonBox?.x ?? 0) + 1);
-      expect(
-        await block.locator('pre').evaluate((element) => element.scrollWidth <= element.clientWidth),
-      ).toBe(true);
+    expect((codeBox?.x ?? 0) + (codeBox?.width ?? 0)).toBeLessThanOrEqual((copyBox?.x ?? 0) + 1);
+    expect(await install.locator('pre').evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
+    const commands = page.locator('section[aria-labelledby="commands-title"]');
+    await expect(commands.locator('.fg-command-list__command')).toHaveText([
+      'devps', 'devps ls', 'devps jump 5173', 'devps open 5173', 'devps kill 5173', 'devps --all',
+    ]);
+    for (const row of await commands.locator('tbody tr').all()) {
+      await expect(row.getByRole('button', { name: /^Copy devps/ })).toBeVisible();
+      const commandBox = await row.locator('.fg-command-list__command').boundingBox();
+      const buttonBox = await row.getByRole('button').boundingBox();
+      expect((commandBox?.x ?? 0) + (commandBox?.width ?? 0)).toBeLessThanOrEqual((buttonBox?.x ?? 0) + 1);
+      expect(buttonBox?.width ?? 0).toBeGreaterThanOrEqual(44);
+      expect(buttonBox?.height ?? 0).toBeGreaterThanOrEqual(44);
     }
+    const keys = page.locator('section[aria-labelledby="keys-title"]');
+    await expect(keys.locator('.fg-command-list__command')).toHaveText([
+      '/', 'q', 'Enter', 'Esc', 'Ctrl+O', 'Ctrl+X', 'Tab', 'Ctrl+R', 'Ctrl+↑ / Ctrl+↓', 'Ctrl+C',
+    ]);
+    await expect(keys.getByRole('button')).toHaveCount(0);
     const frame = page.locator('#frame-pick');
     await expect
       .poll(() =>
@@ -259,10 +270,12 @@ test('capture deep links and hash history reveal the requested tab', async ({ pa
 
 test('library tabs support keyboard navigation and retained capture content', async ({ page }) => {
   await load(page);
+  await expect(page.locator('#frame-orphan')).toBeHidden();
   await page.getByRole('tab', { name: 'Pick', exact: true }).focus();
   await page.keyboard.press('ArrowRight');
   await expect(page.getByRole('tab', { name: 'Orphaned' })).toBeFocused();
   await expect(page.locator('#frame-orphan')).toBeVisible();
+  await expect(page.locator('#frame-pick')).toBeHidden();
   await expect(page.locator('#frame-orphan .term')).toContainText(
     'codex resume 01a07b5e-4c92-47d3-b0f8-5e1a9c7d3268',
   );
@@ -280,7 +293,7 @@ test('clicking the capture opens the full-size dialog and restores focus', async
   await load(page);
   const trigger = page.getByRole('button', { name: 'Expand Pick capture' });
   await expect(page.getByText('Expand capture', { exact: true })).toHaveCount(0);
-  await page.locator('#frame-pick .capture-preview').click();
+  await page.locator('#frame-pick .fg-capture__preview').click();
   const dialog = page.getByRole('dialog', { name: 'Pick capture' });
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('.term')).toContainText('pnpm dev');
@@ -289,7 +302,7 @@ test('clicking the capture opens the full-size dialog and restores focus', async
   ).toBe('none');
   expect(
     await dialog
-      .locator('.term-wrap')
+      .locator('.fg-capture__screen')
       .evaluate((element) => element.scrollWidth > element.clientWidth),
   ).toBe(true);
   await noOverflow(page);
@@ -379,11 +392,10 @@ test('library code copying and syntax tokens work', async ({ page, context }) =>
   await expect
     .poll(() => install.locator('.fg-code-block__text > span[style]').count())
     .toBeGreaterThan(0);
-  const command = page.locator('.cmd .fg-code-block').first();
-  const commandText = await command.locator('code').textContent();
-  await command.getByRole('button', { name: 'Copy code' }).click();
-  await expect(command.getByRole('status')).toHaveText('Code copied to clipboard.');
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(commandText);
+  const commands = page.locator('section[aria-labelledby="commands-title"]');
+  await commands.getByRole('button', { name: 'Copy devps jump 5173', exact: true }).click();
+  await expect(commands.getByRole('status')).toHaveText('devps jump 5173 copied to clipboard.');
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('devps jump 5173');
 });
 
 test('clipboard failure remains recoverable with readable code', async ({ page }) => {
@@ -454,4 +466,11 @@ test('offscreen sections stay visible when motion preferences change', async ({ 
   await expect(commands).toHaveCSS('opacity', '1');
   await page.emulateMedia({ reducedMotion: 'no-preference' });
   await expect(commands).toHaveCSS('opacity', '1');
+});
+
+test('shows each key as a keycap', async ({ page }) => {
+  await load(page);
+  const keys = page.locator('section[aria-labelledby="keys-title"] .fg-command-list__command');
+  await expect(keys.locator('code')).toHaveCount(0);
+  await expect(keys.locator('kbd')).toHaveText(['/', 'q', 'Enter', 'Esc', 'Ctrl+O', 'Ctrl+X', 'Tab', 'Ctrl+R', 'Ctrl+↑', 'Ctrl+↓', 'Ctrl+C']);
 });
