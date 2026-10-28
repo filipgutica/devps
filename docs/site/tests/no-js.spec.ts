@@ -13,7 +13,7 @@ for (const width of [320, 390, 768, 801, 1280]) {
     ).toHaveText(['Guide', 'GitHub', 'Releases']);
     // The appearance picker needs JavaScript and is not rendered without it.
     await expect(page.getByRole('group', { name: 'Color theme' })).toHaveCount(0);
-    await expect(page.locator('.capture-open')).toHaveCount(0);
+    await expect(page.locator('.fg-capture__expand')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Find and manage local dev servers.', level: 1 })).toBeVisible();
     await expect(page.locator('#install code')).toHaveText('brew install filipgutica/tap/devps');
     await expect(page.getByRole('tab')).toHaveCount(0);
@@ -35,7 +35,7 @@ for (const width of [320, 390, 768, 801, 1280]) {
     await expect(projectMenu.locator('[aria-current="page"]')).toHaveText('devps');
     await projectTrigger.click();
     await expect(projectMenu).toBeHidden();
-    if (width <= 800) await page.locator('.site-menu > summary').click();
+    if (width <= 800) await page.locator('.fg-site-rail__menu > summary').click();
     const sectionNav = page.getByRole('navigation', { name: 'On this page' });
     await expect(sectionNav).toBeVisible();
     await sectionNav.getByRole('link', { name: 'Commands', exact: true }).click();
