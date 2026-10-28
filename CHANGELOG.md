@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/filipgutica/devps/compare/v0.3.0...v0.4.0) (2026-10-28)
+
+
+### Features
+
+* **site:** adopt the shared Graphite Indigo design language ([#19](https://github.com/filipgutica/devps/issues/19)) ([f80f013](https://github.com/filipgutica/devps/commit/f80f013046db454c8afa828a3e957c57a2cdc702))
+
 ## [0.3.0](https://github.com/filipgutica/devps/compare/v0.2.0...v0.3.0) (2026-10-04)
 
 
