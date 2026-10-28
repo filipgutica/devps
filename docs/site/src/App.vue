@@ -228,9 +228,10 @@ const keys = [
           description-header="What it does"
         >
           <template #command="{ item }">
-            <template v-for="(key, index) in item.command.split(' / ')" :key="key">
-              <template v-if="index > 0"> / </template><kbd>{{ key }}</kbd>
-            </template>
+            <template v-if="item.command === 'Ctrl+↑ / Ctrl+↓'"
+              ><kbd>Ctrl+↑</kbd> / <kbd>Ctrl+↓</kbd></template
+            >
+            <kbd v-else>{{ item.command }}</kbd>
           </template>
           <template #description="{ item }">
             <template v-if="item.command === 'Ctrl+↑ / Ctrl+↓'"
