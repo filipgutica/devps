@@ -8,9 +8,10 @@ for (const width of [320, 390, 768, 801, 1280]) {
     await page.goto('/devps/');
     const projectTrigger = page.getByLabel('Project: devps', { exact: true });
     await expect(projectTrigger).toBeVisible();
-    await expect(
-      page.getByRole('navigation', { name: 'Site links' }).getByRole('link'),
-    ).toHaveText(['Guide', 'GitHub', 'Releases']);
+    // Phones keep the header to one row; the Source fact and the footer repeat these links.
+    const siteLinks = page.getByRole('navigation', { name: 'Site links' });
+    if (width <= 640) await expect(siteLinks).toBeHidden();
+    else await expect(siteLinks.getByRole('link')).toHaveText(['GitHub', 'Releases']);
     // The appearance picker needs JavaScript and is not rendered without it.
     await expect(page.getByRole('group', { name: 'Color theme' })).toHaveCount(0);
     await expect(page.locator('.fg-capture__expand')).toHaveCount(0);
@@ -22,7 +23,7 @@ for (const width of [320, 390, 768, 801, 1280]) {
       await expect(page.locator(`#frame-${id} .term`)).toBeVisible();
     await expect(page.locator('#frame-stop')).toContainText('Proceed? [y/N]');
     // The project menu is a native details element. Close it again so it does
-    // not cover the local Menu on narrow screens.
+    // not cover the rail toggle on narrow screens.
     const projectMenu = page.getByRole('navigation', { name: 'Projects' });
     await expect(projectMenu).toBeHidden();
     await projectTrigger.click();

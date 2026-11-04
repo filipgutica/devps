@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { UiBadge, UiCard, UiCodeBlock } from '@filipgutica/ui';
+import { UiCard, UiCodeBlock } from '@filipgutica/ui';
 import { UiCapture, UiCommandList, UiSiteHeader, UiSiteNav } from '@filipgutica/ui/site';
 import { captures } from './captures';
 
@@ -89,16 +89,14 @@ const keys = [
 
 <template>
   <a class="fg-site-skip" href="#main">Skip to content</a>
-  <div class="page" :data-enhanced="enhanced">
+  <div class="fg-site-docs" :data-enhanced="enhanced">
     <UiSiteHeader
-      class="page-header"
       project="devps"
       :links="[
         {
-          label: 'Guide',
-          href: 'https://github.com/filipgutica/devps/blob/main/README.md',
+          label: 'GitHub',
+          href: 'https://github.com/filipgutica/devps',
         },
-        { label: 'GitHub', href: 'https://github.com/filipgutica/devps' },
         {
           label: 'Releases',
           href: 'https://github.com/filipgutica/devps/releases',
@@ -130,7 +128,7 @@ const keys = [
         <dl class="fg-site-facts">
           <div>
             <dt>Runs on</dt>
-            <dd><UiBadge>macOS only</UiBadge></dd>
+            <dd>macOS only</dd>
           </div>
           <div>
             <dt>Written in</dt>
@@ -150,7 +148,7 @@ const keys = [
       </section>
 
       <section class="capture" aria-label="devps in use">
-        <p class="hint">devps 0.1.1 demo output; controls updated for browse mode.</p>
+        <p class="hint">Demo projects and sample processes.</p>
         <UiCapture :items="captures" label="Steps">
           <template #caption="{ item }">
             <p v-if="item.id === 'pick'">
@@ -170,8 +168,8 @@ const keys = [
             </p>
           </template>
         </UiCapture>
-        <UiCard class="legend" title="On screen" title-tag="h3">
-          <dl>
+        <UiCard title="On screen" title-tag="h3">
+          <dl class="fg-site-legend">
             <div>
               <dt>PORTS</dt>
               <dd>Listening ports.</dd>
@@ -278,7 +276,7 @@ const keys = [
 
       <section aria-labelledby="limits-title">
         <h2 id="limits-title">Good to know</h2>
-        <dl class="fg-site-definitions notes">
+        <dl class="fg-site-definitions">
           <dt>Stopping</dt>
           <dd>
             <code>SIGTERM</code> to the root and children; <code>SIGKILL</code> to survivors after
@@ -290,8 +288,11 @@ const keys = [
             <code>CODEX_THREAD_ID</code> are read. Other environment values are never printed,
             stored, or passed on.
           </dd>
-          <dt>Compiled servers outside your home directory may be hidden.</dt>
-          <dd><code>--all</code> includes every TCP listener.</dd>
+          <dt>Hidden servers</dt>
+          <dd>
+            Compiled servers outside your home directory may be hidden. <code>--all</code> includes
+            every TCP listener.
+          </dd>
           <dt>macOS only</dt>
           <dd>
             Uses <code>ps</code>, <code>lsof</code>, <code>open</code>, <code>osascript</code>, and
@@ -307,7 +308,7 @@ const keys = [
         </nav>
       </section>
     </main>
-    <footer>
+    <footer class="fg-site-footer">
       <a href="https://github.com/filipgutica">Built by Filip Gutica</a>
       <nav aria-label="Project links">
         <a href="https://github.com/filipgutica/homebrew-tap">Homebrew tap</a>
