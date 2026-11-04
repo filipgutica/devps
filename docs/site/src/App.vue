@@ -152,8 +152,8 @@ const keys = [
         <UiCapture :items="captures" label="Steps">
           <template #caption="{ item }">
             <p v-if="item.id === 'pick'">
-              One row per job. The preview shows the origin, the jump target, the working directory,
-              and the chain of processes that launched it.
+              The preview shows the origin, the jump target, the working directory, and the chain of
+              processes that launched it.
             </p>
             <p v-else-if="item.id === 'orphan'">
               A server whose launcher is gone is marked <code>⚠ orphaned</code>. devps still knows
@@ -293,7 +293,7 @@ const keys = [
             Compiled servers outside your home directory may be hidden. <code>--all</code> includes
             every TCP listener.
           </dd>
-          <dt>macOS only</dt>
+          <dt>System tools</dt>
           <dd>
             Uses <code>ps</code>, <code>lsof</code>, <code>open</code>, <code>osascript</code>, and
             <code>pbcopy</code>. Some origins allow only app focus, not an exact tab or
