@@ -63,7 +63,7 @@ const keys = [
   },
   {
     command: 'Ctrl+O',
-    description: "Open the selected job's ports in your browser.",
+    description: 'Open every port of the selected jobs in your browser.',
   },
   {
     command: 'Ctrl+X',
@@ -108,9 +108,10 @@ const keys = [
       <section class="intro" aria-labelledby="title">
         <h1 id="title">Find and manage local dev servers.</h1>
         <p class="lede">
-          devps is <code>ps</code> for dev servers. It lists every dev server you have running,
-          with its ports, project, and age, and its <em>origin</em>: the terminal, editor, or agent
-          that started it. Use it to find a server you forgot, open it in the browser, or stop it.
+          devps is <code>ps</code> for dev servers on macOS. It lists the dev servers you have
+          running, with their ports, project, and age, and their <em>origin</em>: the terminal,
+          editor, or agent that started them. Use it to find a server you forgot, jump back to its
+          origin, open it in the browser, or stop it.
         </p>
         <p class="lede">
           devps groups a command such as <code>pnpm dev</code> and the servers it starts into one
@@ -164,7 +165,7 @@ const keys = [
               its working directory, and the chain of processes that launched it.
             </p>
             <p v-else-if="item.id === 'orphan'">
-              A job is <em>orphaned</em> when the shell, agent, or app that started it has exited.
+              A job is <em>orphaned</em> when its origin has exited.
               devps marks it <code>⚠ orphaned</code>. Here devps still knows which Codex thread
               started the server, so a jump focuses the Codex app and copies the thread's resume
               command.
@@ -196,7 +197,7 @@ const keys = [
             <div>
               <dt>ORIGIN</dt>
               <dd>
-                Where the job came from, or <code>⚠ orphaned</code> when that process has exited.
+                Where the job came from, or <code>⚠ orphaned</code>.
               </dd>
             </div>
             <div>
@@ -206,8 +207,7 @@ const keys = [
             <div>
               <dt>PID</dt>
               <dd>
-                The job's root process: the top process below the shell, agent, or app that
-                launched it.
+                The job's root process: the top process below its origin.
               </dd>
             </div>
           </dl>
@@ -290,9 +290,9 @@ const keys = [
               <tr>
                 <th scope="row">Codex app, T3 Code Workbench, Claude app</th>
                 <td>
-                  The app. For a known session, devps also copies
-                  <code>codex resume &lt;id&gt;</code> or <code>claude --resume &lt;id&gt;</code> to
-                  the clipboard.
+                  The app. For a known Codex session, devps also copies
+                  <code>codex resume &lt;id&gt;</code> to the clipboard. For an orphaned job with a
+                  known Claude Code session, it copies <code>claude --resume &lt;id&gt;</code>.
                 </td>
               </tr>
             </tbody>
@@ -311,9 +311,9 @@ const keys = [
           </dd>
           <dt>Environment hints</dt>
           <dd>
-            To find an origin, devps uses only a fixed list of environment hints, such as
-            <code>WARP_FOCUS_URL</code> and <code>CODEX_THREAD_ID</code>. It never prints, stores,
-            or passes on other environment values.
+            devps finds an origin by tracing the processes that started the job, plus a fixed list
+            of inherited environment hints. It never prints, stores, or passes on other environment
+            values.
           </dd>
           <dt>Hidden servers</dt>
           <dd>
