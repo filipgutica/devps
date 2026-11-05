@@ -69,10 +69,6 @@ section > header p,
 .data td {
   color: var(--color-muted);
 }
-/* Keep short identifiers such as --all whole instead of breaking after a hyphen. */
-.fg-site-definitions code {
-  white-space: nowrap;
-}
 .links {
   display: flex;
   flex-wrap: wrap;
