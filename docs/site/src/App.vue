@@ -291,8 +291,8 @@ const keys = [
               <tr>
                 <th scope="row">Codex app, T3 Code Workbench, Claude app</th>
                 <td>
-                  The app. A job started by Codex always focuses the Codex app, even inside
-                  T3 Code Workbench. For a known Codex session, devps also copies
+                  The app. A job from the Codex app or a Codex thread focuses the Codex app,
+                  even inside T3 Code Workbench. For a known Codex session, devps also copies
                   <code>codex resume &lt;id&gt;</code> to the clipboard. For an orphaned job with a
                   known Claude Code session, it copies <code>claude --resume &lt;id&gt;</code>.
                 </td>
