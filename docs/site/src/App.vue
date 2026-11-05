@@ -22,15 +22,15 @@ const navigation = [
 const commands = [
   {
     command: 'devps',
-    description: 'Interactive picker.',
+    description: 'Open the interactive picker.',
   },
   {
     command: 'devps ls',
-    description: 'Plain table.',
+    description: 'Print a plain table.',
   },
   {
     command: 'devps jump 5173',
-    description: 'Focus the originating terminal, editor, or agent app.',
+    description: 'Return to the origin of the server on port 5173.',
   },
   {
     command: 'devps open 5173',
@@ -40,13 +40,13 @@ const commands = [
   },
   {
     command: 'devps --all',
-    description: 'Include all TCP listeners, beyond dev runtimes.',
+    description: 'Show every TCP listener, not only dev servers.',
   },
 ];
 const keys = [
   {
     command: '/',
-    description: 'Edit the filter.',
+    description: 'Start a search.',
   },
   {
     command: 'q',
@@ -55,23 +55,23 @@ const keys = [
   {
     command: 'Enter',
     description:
-      'Search: keep the filter in the header and return to browsing. Browse: jump to origin.',
+      "In browse mode, jump to the selected job's origin. While searching, keep the filter and return to browsing. The header shows the active filter.",
   },
   {
     command: 'Esc',
-    description: 'Search: clear the filter and return to browsing. Browse: quit.',
+    description: 'In browse mode, quit. While searching, clear the filter and return to browsing.',
   },
   {
     command: 'Ctrl+O',
-    description: 'Open its URL.',
+    description: "Open the selected job's ports in your browser.",
   },
   {
     command: 'Ctrl+X',
-    description: 'Stop selected jobs after confirmation.',
+    description: 'Stop the selected jobs after you confirm.',
   },
   {
     command: 'Tab',
-    description: 'Select multiple jobs.',
+    description: 'Select more than one job.',
   },
   {
     command: 'Ctrl+R',
@@ -108,8 +108,14 @@ const keys = [
       <section class="intro" aria-labelledby="title">
         <h1 id="title">Find and manage local dev servers.</h1>
         <p class="lede">
-          One row per job: ports, project, origin, and age. Jump to its origin, open its URL, or
-          stop it.
+          devps is <code>ps</code> for dev servers. It lists every dev server you have running,
+          with its ports, project, and age, and its <em>origin</em>: the terminal, editor, or agent
+          that started it. Use it to find a server you forgot, open it in the browser, or stop it.
+        </p>
+        <p class="lede">
+          devps groups a command such as <code>pnpm dev</code> and the servers it starts into one
+          <em>job</em>. If <code>pnpm dev</code> starts two Vite servers, devps shows one row with
+          both ports.
         </p>
         <div id="install" class="install-command">
           <p class="hint">Install with Homebrew</p>
@@ -122,8 +128,10 @@ const keys = [
           />
         </div>
         <p class="hint">
-          Picker: <code>fzf</code> 0.66+ and terminal input; otherwise, a plain table.
-          <a href="https://brew.sh/">Install Homebrew</a> if needed.
+          Then run <code>devps</code> to open the interactive picker, or <code>devps ls</code> to
+          print a plain table. The picker needs <code>fzf</code> 0.66 or newer and a terminal.
+          Without them, <code>devps</code> prints the table instead.
+          <a href="https://brew.sh/">Install Homebrew</a> if you don't have it.
         </p>
         <dl class="fg-site-facts">
           <div>
@@ -148,23 +156,24 @@ const keys = [
       </section>
 
       <section class="capture" aria-label="devps in use">
-        <p class="hint">Demo projects and sample processes.</p>
+        <p class="hint">These captures use demo projects and sample processes.</p>
         <UiCapture :items="captures" label="Steps">
           <template #caption="{ item }">
             <p v-if="item.id === 'pick'">
-              The preview shows the origin, the jump target, the working directory, and the chain of
-              processes that launched it.
+              The preview under the list shows the selected job's origin, where a jump would land,
+              its working directory, and the chain of processes that launched it.
             </p>
             <p v-else-if="item.id === 'orphan'">
-              A server whose launcher is gone is marked <code>⚠ orphaned</code>. devps still knows
-              which agent thread started it, and jumping copies the resume command.
+              A job is <em>orphaned</em> when the shell, agent, or app that started it has exited.
+              devps marks it <code>⚠ orphaned</code>. Here devps still knows which Codex thread
+              started the server, so a jump focuses the Codex app and copies the thread's resume
+              command.
             </p>
             <p v-else-if="item.id === 'list'">
-              The same rows as a plain table. devps prints this when a supported
-              <code>fzf</code> is unavailable or standard input is not a terminal.
+              <code>devps ls</code> prints the same rows as a plain table.
             </p>
             <p v-else-if="item.id === 'stop'">
-              Shows the processes it will stop, then asks. <code>-y</code> skips the question.
+              devps lists the processes it will stop and asks before it stops them.
             </p>
           </template>
         </UiCapture>
@@ -172,27 +181,34 @@ const keys = [
           <dl class="fg-site-legend">
             <div>
               <dt>PORTS</dt>
-              <dd>Listening ports.</dd>
+              <dd>The ports the job listens on.</dd>
             </div>
             <div>
               <dt>PROJECT</dt>
-              <dd>Repository; <code>[worktree]</code> and subfolder when different.</dd>
+              <dd>
+                The repository, plus the <code>[worktree]</code> and subfolder when they differ.
+              </dd>
             </div>
             <div>
               <dt>COMMAND</dt>
-              <dd>Runner, e.g. <code>pnpm dev</code>.</dd>
+              <dd>The command that started the job, such as <code>pnpm dev</code>.</dd>
             </div>
             <div>
               <dt>ORIGIN</dt>
-              <dd>Terminal, editor, or agent. <code>⚠ orphaned</code>: launcher gone.</dd>
+              <dd>
+                Where the job came from, or <code>⚠ orphaned</code> when that process has exited.
+              </dd>
             </div>
             <div>
               <dt>AGE</dt>
-              <dd>Time running.</dd>
+              <dd>How long the job has run.</dd>
             </div>
             <div>
               <dt>PID</dt>
-              <dd>Job root process.</dd>
+              <dd>
+                The job's root process: the top process below the shell, agent, or app that
+                launched it.
+              </dd>
             </div>
           </dl>
         </UiCard>
@@ -200,15 +216,21 @@ const keys = [
       <section aria-labelledby="commands-title">
         <header>
           <h2 id="commands-title">Commands</h2>
-          <p>Matches port first, then root or listener PID.</p>
+          <p>
+            <code>jump</code>, <code>open</code>, and <code>kill</code> take a port or a process ID.
+            devps looks for a job on that port first, then for a job whose root process or
+            listening process has that ID.
+          </p>
         </header>
         <UiCommandList :items="commands" copyable description-header="What it does">
           <template #description="{ item }">
             <template v-if="item.command === 'devps open 5173'"
-              >Open <code>http://localhost:5173</code>.</template
+              >Open <code>http://localhost:5173</code> in your browser. If the job listens on more
+              ports, devps opens each one.</template
             >
             <template v-else-if="item.command === 'devps kill 5173'"
-              >Stop the whole job after confirmation; <code>-y</code> skips it.</template
+              >Stop the whole job after you confirm. <code>-y</code> skips the
+              confirmation.</template
             >
             <template v-else>{{ item.description }}</template>
           </template>
@@ -217,7 +239,10 @@ const keys = [
       <section aria-labelledby="keys-title">
         <header>
           <h2 id="keys-title">Keys in the picker</h2>
-          <p>Starts in browse mode. While searching, <kbd>q</kbd> and <kbd>/</kbd> are text.</p>
+          <p>
+            The picker starts in browse mode. Press <kbd>/</kbd> to search. While you search,
+            <kbd>q</kbd> and <kbd>/</kbd> type text instead of running their commands.
+          </p>
         </header>
         <UiCommandList
           :items="keys"
@@ -233,7 +258,7 @@ const keys = [
           </template>
           <template #description="{ item }">
             <template v-if="item.command === 'Ctrl+↑ / Ctrl+↓'"
-              >Scroll details. <kbd>Ctrl</kbd> shortcuts and multi-selection work in both
+              >Scroll the preview. The <kbd>Ctrl</kbd> shortcuts and multi-selection work in both
               modes.</template
             >
             <template v-else>{{ item.description }}</template>
@@ -243,7 +268,7 @@ const keys = [
       <section aria-labelledby="jump-title">
         <header>
           <h2 id="jump-title">Where jump lands</h2>
-          <p>Exact targets depend on available origin information.</p>
+          <p>Where a jump lands depends on what devps can learn about the origin.</p>
         </header>
         <div class="scroll">
           <table class="data">
@@ -256,17 +281,18 @@ const keys = [
             <tbody>
               <tr>
                 <th scope="row">Warp, iTerm2, Terminal, tmux</th>
-                <td>Tab or pane when session information matches.</td>
+                <td>The tab or pane, when its session information is available.</td>
               </tr>
               <tr>
                 <th scope="row">VS Code</th>
-                <td>Folder's window; cannot select a terminal tab.</td>
+                <td>The window for that folder. devps cannot select a VS Code terminal tab.</td>
               </tr>
               <tr>
                 <th scope="row">Codex app, T3 Code Workbench, Claude app</th>
                 <td>
-                  App; copies <code>codex resume &lt;id&gt;</code> or
-                  <code>claude --resume &lt;id&gt;</code> for known sessions.
+                  The app. For a known session, devps also copies
+                  <code>codex resume &lt;id&gt;</code> or <code>claude --resume &lt;id&gt;</code> to
+                  the clipboard.
                 </td>
               </tr>
             </tbody>
@@ -279,25 +305,25 @@ const keys = [
         <dl class="fg-site-definitions">
           <dt>Stopping</dt>
           <dd>
-            <code>SIGTERM</code> to the root and children; <code>SIGKILL</code> to survivors after
-            three seconds. GUI apps, PID 1, and devps's terminal or agent are protected.
+            devps sends <code>SIGTERM</code> to the job's root process and its children. After three
+            seconds it sends <code>SIGKILL</code> to any that are still running. It never stops GUI
+            apps, PID 1, or the terminal or agent that runs devps.
           </dd>
-          <dt>Orphan origins</dt>
+          <dt>Environment hints</dt>
           <dd>
-            Only allowlisted hints such as <code>WARP_FOCUS_URL</code> and
-            <code>CODEX_THREAD_ID</code> are read. Other environment values are never printed,
-            stored, or passed on.
+            To find an origin, devps uses only a fixed list of environment hints, such as
+            <code>WARP_FOCUS_URL</code> and <code>CODEX_THREAD_ID</code>. It never prints, stores,
+            or passes on other environment values.
           </dd>
           <dt>Hidden servers</dt>
           <dd>
-            Compiled servers outside your home directory may be hidden. <code>--all</code> includes
-            every TCP listener.
+            The default filter can hide compiled servers outside your home directory.
+            <code>--all</code> shows every TCP listener.
           </dd>
           <dt>System tools</dt>
           <dd>
-            Uses <code>ps</code>, <code>lsof</code>, <code>open</code>, <code>osascript</code>, and
-            <code>pbcopy</code>. Some origins allow only app focus, not an exact tab or
-            conversation.
+            devps uses the macOS tools <code>ps</code>, <code>lsof</code>, <code>open</code>,
+            <code>osascript</code>, and <code>pbcopy</code>.
           </dd>
         </dl>
         <nav class="links" aria-label="Documentation">
