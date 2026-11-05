@@ -165,7 +165,7 @@ const keys = [
               its working directory, and the chain of processes that launched it.
             </p>
             <p v-else-if="item.id === 'orphan'">
-              A job is <em>orphaned</em> when its origin has exited.
+              A job is <em>orphaned</em> when the process that started it has exited.
               devps marks it <code>⚠ orphaned</code>. Here devps still knows which Codex thread
               started the server, so a jump focuses the Codex app and copies the thread's resume
               command.
@@ -207,7 +207,8 @@ const keys = [
             <div>
               <dt>PID</dt>
               <dd>
-                The job's root process: the top process below its origin.
+                The job's root process: the top process below the shell, agent, or app that
+                launched it.
               </dd>
             </div>
           </dl>
