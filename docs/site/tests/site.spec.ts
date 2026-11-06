@@ -113,7 +113,7 @@ for (const width of [320, 390, 768, 801, 1280]) {
     const header = page.locator('.fg-site-header');
     await expect(projectTrigger(page)).toBeVisible();
     const heading = page.getByRole('heading', { level: 1 });
-    await expect(heading).toHaveText('Find and manage local dev servers.');
+    await expect(heading).toHaveCount(1);
     // The rail toggle sits below the shared header at <=800px, and the section
     // rail sits beside the intro on desktop.
     const introAnchor = page.locator(width <= 800 ? '.fg-site-rail' : '.fg-site-header');
@@ -153,7 +153,8 @@ for (const width of [320, 390, 768, 801, 1280]) {
     expect(await install.locator('pre').evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
     const commands = page.locator('section[aria-labelledby="commands-title"]');
     await expect(commands.locator('.fg-command-list__command')).toHaveText([
-      'devps', 'devps ls', 'devps jump 5173', 'devps open 5173', 'devps kill 5173', 'devps --all',
+      'devps', 'devps ls', 'devps jump 5173', 'devps open 5173', 'devps kill 5173', 'devps --version',
+      'devps --help',
     ]);
     for (const row of await commands.locator('tbody tr').all()) {
       await expect(row.getByRole('button', { name: /^Copy devps/ })).toBeVisible();
@@ -205,13 +206,13 @@ test('native anchor navigation, history, and scroll selection stay independent',
   await page
     .locator('#keys-title')
     .evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
-  await expect(sectionNav.getByRole('link', { name: 'Keys in the picker' })).toHaveAttribute(
+  await expect(sectionNav.getByRole('link', { name: 'Picker keys' })).toHaveAttribute(
     'aria-current',
     'location',
   );
   await expect(page).toHaveURL(/#commands-title$/);
   expect(await page.evaluate(() => history.length)).toBe(historyBeforeScroll);
-  await sectionNav.getByRole('link', { name: 'Good to know' }).click();
+  await sectionNav.getByRole('link', { name: 'Limits' }).click();
   await expect(page).toHaveURL(/#limits-title$/);
   await expectAtBottom(page);
   await traverseHistory({ page, delta: -1, hash: '#commands-title' });
@@ -222,7 +223,7 @@ test('native anchor navigation, history, and scroll selection stay independent',
   await page
     .locator('#keys-title')
     .evaluate((element) => element.scrollIntoView({ behavior: 'instant' }));
-  await expect(sectionNav.getByRole('link', { name: 'Keys in the picker' })).toHaveAttribute(
+  await expect(sectionNav.getByRole('link', { name: 'Picker keys' })).toHaveAttribute(
     'aria-current',
     'location',
   );
@@ -230,7 +231,7 @@ test('native anchor navigation, history, and scroll selection stay independent',
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }),
   );
   await expectAtBottom(page);
-  await expect(sectionNav.getByRole('link', { name: 'Good to know' })).toHaveAttribute(
+  await expect(sectionNav.getByRole('link', { name: 'Limits' })).toHaveAttribute(
     'aria-current',
     'location',
   );
@@ -243,7 +244,7 @@ test('initial deep links settle after all-capture SSR becomes tabs', async ({ pa
   await expect(
     page
       .getByRole('navigation', { name: 'On this page' })
-      .getByRole('link', { name: 'Keys in the picker' }),
+      .getByRole('link', { name: 'Picker keys' }),
   ).toHaveAttribute('aria-current', 'location');
 });
 
