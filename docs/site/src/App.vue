@@ -55,7 +55,7 @@ const keys = [
   {
     command: 'Enter',
     description:
-      "In browse mode, jump to the selected job's origin. While searching, keep the filter and return to browsing. The header shows the active filter.",
+      "In browse mode, jump to the selected job's origin. With several jobs selected, devps jumps to one only. While searching, keep the filter and return to browsing. The header shows the active filter.",
   },
   {
     command: 'Esc',
@@ -292,8 +292,8 @@ const keys = [
                 <th scope="row">Codex app, T3 Code Workbench, Claude app</th>
                 <td>
                   The app. A job from the Codex app or a Codex thread focuses the Codex app,
-                  even inside T3 Code Workbench. For a known Codex session, devps also copies
-                  <code>codex resume &lt;id&gt;</code> to the clipboard. For an orphaned job with a
+                  even inside T3 Code Workbench. For these jobs, when devps knows the session ID, it
+                  also copies <code>codex resume &lt;id&gt;</code> to the clipboard. For an orphaned job with a
                   known Claude Code session, it copies <code>claude --resume &lt;id&gt;</code>.
                 </td>
               </tr>
@@ -308,14 +308,15 @@ const keys = [
           <dt>Stopping</dt>
           <dd>
             devps sends <code>SIGTERM</code> to the job's root process and its children. After three
-            seconds it sends <code>SIGKILL</code> to any that are still running. It never stops GUI
-            apps, PID 1, or the terminal or agent that runs devps.
+            seconds it sends <code>SIGKILL</code> to any that are still running. It skips PID 1,
+            devps and the processes that launched it, and programs inside a <code>.app</code> bundle
+            in an Applications folder.
           </dd>
           <dt>Environment hints</dt>
           <dd>
             devps finds an origin by tracing the processes that started the job, plus a fixed list
-            of inherited environment hints. It never prints, stores, or passes on other environment
-            values.
+            of inherited environment hints. It reads the job's full environment but keeps only those
+            hints. The preview shows them.
           </dd>
           <dt>Hidden servers</dt>
           <dd>
