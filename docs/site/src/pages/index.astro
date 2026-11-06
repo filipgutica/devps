@@ -11,7 +11,7 @@ const darkTokens = [libraryThemeCss, sitePaletteCss].map((css) => {
   if (!tokens) throw new Error('The dark theme tokens are missing.');
   return tokens;
 }).join('\n');
-const noScriptDarkCss = `@media (prefers-color-scheme: dark) { :root:not(.dark) { ${darkTokens} } }`;
+const noScriptDarkCss = `@media (prefers-color-scheme: dark) { :root:not(.dark) { ${darkTokens} --color-project: #f39a62; --color-project-dark: #f39a62; } }`;
 ---
 <!doctype html>
 <html lang="en">
