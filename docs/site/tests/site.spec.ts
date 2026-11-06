@@ -170,20 +170,29 @@ for (const width of [320, 390, 768, 801, 1280]) {
     ]);
     await expect(keys.getByRole('button')).toHaveCount(0);
     const frame = page.locator('#frame-pick');
-    await expect
-      .poll(() =>
-        frame
-          .locator('.term')
-          .evaluate(
-            (element) =>
-              element.getBoundingClientRect().width - (element.parentElement?.clientWidth ?? 0),
-          ),
-      )
-      .toBeLessThan(2);
+    // ui keeps captures at full size below 70% fit so terminal text stays readable.
+    if ([320, 390, 801].includes(width)) {
+      const screen = frame.locator('.fg-capture__screen');
+      await expect(frame.locator('.term')).toHaveCSS('transform', 'none');
+      expect(await screen.evaluate((element) => element.scrollWidth > element.clientWidth)).toBe(true);
+      await screen.evaluate((element) => { element.scrollLeft = 100; });
+      expect(await screen.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+    } else {
+      await expect
+        .poll(() =>
+          frame
+            .locator('.term')
+            .evaluate(
+              (element) =>
+                element.getBoundingClientRect().width - (element.parentElement?.clientWidth ?? 0),
+            ),
+        )
+        .toBeLessThan(2);
+    }
     await expect(frame.locator('.term')).toContainText(':4273');
     await expect(frame.locator('.term')).toContainText('Claude Code 3f9a1c2e');
     await checkProjectMenu(page);
-    if (width <= 800) await page.getByRole('button', { name: 'On this page', exact: true }).click();
+    if (width <= 800) await page.getByRole('button', { name: /^On this page: / }).click();
     await expect(page.getByRole('navigation', { name: 'On this page' })).toBeVisible();
     await noOverflow(page);
   });
@@ -289,14 +298,14 @@ test('library tabs support keyboard navigation and retained capture content', as
   await expect(page.getByRole('tab', { name: 'Pick', exact: true })).toBeFocused();
 });
 
-test('clicking the capture opens the full-size dialog and restores focus', async ({
+test('full-size capture access and focus restoration work on phone and desktop', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await load(page);
-  const trigger = page.getByRole('button', { name: 'Expand Pick capture' });
-  await expect(page.getByText('Expand capture', { exact: true })).toHaveCount(0);
-  await page.locator('#frame-pick .fg-capture__preview').click();
+  const trigger = page.getByRole('button', { name: 'Expand Pick capture at full size', exact: true });
+  await expect(page.locator('.fg-capture__full-label')).toBeHidden();
+  await trigger.click();
   const dialog = page.getByRole('dialog', { name: 'Pick capture' });
   await expect(dialog).toBeVisible();
   await expect(dialog.locator('.term')).toContainText('pnpm dev');
@@ -319,12 +328,17 @@ test('clicking the capture opens the full-size dialog and restores focus', async
     await expect(dialog).not.toBeVisible();
     await expect(trigger).toBeFocused();
   }
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.locator('#frame-pick .fg-capture__preview').click();
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(trigger).toBeFocused();
 });
 
 test('drawer focus, dismissal, anchor destination, and desktop breakpoint', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await load(page);
-  const trigger = page.getByRole('button', { name: 'On this page', exact: true });
+  const trigger = page.getByRole('button', { name: /^On this page: / });
   await trigger.click();
   const drawer = page.getByRole('dialog', { name: 'On this page' });
   await expect(drawer).toBeVisible();
@@ -347,7 +361,7 @@ test('drawer focus, dismissal, anchor destination, and desktop breakpoint', asyn
   await page.setViewportSize({ width: 801, height: 900 });
   await expect(drawer).not.toBeVisible();
   await expect(page.getByRole('navigation', { name: 'On this page' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'On this page', exact: true })).not.toBeVisible();
+  await expect(page.getByRole('button', { name: /^On this page: / })).not.toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(trigger).toBeVisible();
   await noOverflow(page);
@@ -358,7 +372,7 @@ test('navigation focus survives both breakpoints without stealing content focus'
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await load(page);
-  const trigger = page.getByRole('button', { name: 'On this page', exact: true });
+  const trigger = page.getByRole('button', { name: /^On this page: / });
   const firstSectionLink = page
     .getByRole('navigation', { name: 'On this page' })
     .getByRole('link', { name: 'Install', exact: true });
@@ -431,6 +445,9 @@ test('themes preserve saved choice, system changes, and cross-tab storage', asyn
   await load(page);
   await picker(page).getByRole('button', { name: 'Dark theme', exact: true }).click();
   await expect(page.locator('html')).toHaveClass('dark');
+  expect(await page.locator('html').evaluate((element) =>
+    getComputedStyle(element).getPropertyValue('--color-project-dark').trim(),
+  )).toBe('#f39a62');
   expect(await page.evaluate(() => localStorage.getItem('tool-site-theme'))).toBe('dark');
   await page.reload();
   await expect(picker(page).getByRole('button', { name: 'Dark theme', exact: true })).toHaveAttribute('aria-pressed', 'true');

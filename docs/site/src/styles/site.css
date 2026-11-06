@@ -6,7 +6,16 @@
 @import '@filipgutica/ui/themes/graphite-indigo.css';
 @import '@filipgutica/ui/site.css';
 
-/* The library owns the docs shell, controls, and capture palette; this page owns its composition. */
+:root {
+  --color-project: #b4440b;
+  --color-project-dark: #f39a62;
+}
+:root.dark {
+  --color-project: #f39a62;
+  --color-project-dark: #f39a62;
+}
+
+/* The library owns the docs shell, hero, controls, and capture palette. */
 html {
   scroll-behavior: smooth;
 }
@@ -14,15 +23,12 @@ main > section,
 main > section > * {
   min-width: 0;
 }
-main > section,
+main > section:not(.fg-site-hero),
 main > section > header {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   align-content: start;
-}
-.intro {
-  gap: var(--space-5);
 }
 .lede {
   max-width: 56ch;
@@ -31,13 +37,7 @@ main > section > header {
 }
 section > header p {
   font-size: var(--text-reading);
-}
-section > header p,
-.hint {
   color: var(--color-muted);
-}
-.hint {
-  font-size: var(--text-sm);
 }
 .install-command {
   display: grid;

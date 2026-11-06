@@ -72,7 +72,15 @@ test('no-JavaScript readers follow the OS dark theme from the library palette', 
     )
     .not.toBe(lightBackground);
   await expect(page.locator('#install code')).toHaveText('brew install filipgutica/tap/devps');
+  const projectHue = () => page.locator('html').evaluate((element) =>
+    getComputedStyle(element).getPropertyValue('--color-project').trim(),
+  );
+  expect(await projectHue()).toBe('#f39a62');
+  expect(await page.locator('html').evaluate((element) =>
+    getComputedStyle(element).getPropertyValue('--color-project-dark').trim(),
+  )).toBe('#f39a62');
   await page.emulateMedia({ colorScheme: 'light' });
+  await expect.poll(projectHue).toBe('#b4440b');
   await expect
     .poll(() =>
       page.locator('body').evaluate((element) => getComputedStyle(element).backgroundColor),

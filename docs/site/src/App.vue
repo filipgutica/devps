@@ -114,46 +114,50 @@ const keys = [
     />
     <UiSiteNav label="On this page" :groups="navigation" />
     <main id="main">
-      <section class="intro" aria-labelledby="title">
+      <section class="intro fg-site-hero" aria-labelledby="title">
         <h1 id="title">Find the dev server you left running.</h1>
-        <p class="lede">
-          devps is a command-line tool for macOS that lists local dev servers and shows what
-          started each one. Find a server by its port or project, return to its terminal, editor,
-          or agent app, open it in the browser, or stop it.
-        </p>
-        <div id="install" class="install-command">
-          <p class="hint">
-            Install with Homebrew. If you need Homebrew first,
-            <a href="https://brew.sh/">install it here</a>.
+        <div class="fg-site-hero__lede">
+          <p class="lede">
+            devps is a command-line tool for macOS that lists local dev servers and shows what
+            started each one. Find a server by its port or project, return to its terminal, editor,
+            or agent app, open it in the browser, or stop it.
           </p>
-          <UiCodeBlock
-            code="brew install filipgutica/tap/devps"
-            language="bash"
-            variant="compact"
-            :copyable="enhanced"
-            :wrap="true"
-          />
         </div>
-        <dl class="fg-site-facts">
-          <div>
-            <dt>Runs on</dt>
-            <dd>macOS only</dd>
+        <div class="fg-site-hero__aside">
+          <div id="install" class="install-command">
+            <p class="fg-site-meta">
+              Install with Homebrew. If you need Homebrew first,
+              <a href="https://brew.sh/">install it here</a>.
+            </p>
+            <UiCodeBlock
+              code="brew install filipgutica/tap/devps"
+              language="bash"
+              variant="compact"
+              :copyable="enhanced"
+              :wrap="true"
+            />
           </div>
-          <div>
-            <dt>Written in</dt>
-            <dd>TypeScript</dd>
-          </div>
-          <div>
-            <dt>License</dt>
-            <dd>MIT</dd>
-          </div>
-          <div>
-            <dt>Source</dt>
-            <dd>
-              <a href="https://github.com/filipgutica/devps">filipgutica/devps</a>
-            </dd>
-          </div>
-        </dl>
+          <dl class="fg-site-facts">
+            <div>
+              <dt>Runs on</dt>
+              <dd>macOS only</dd>
+            </div>
+            <div>
+              <dt>Written in</dt>
+              <dd>TypeScript</dd>
+            </div>
+            <div>
+              <dt>License</dt>
+              <dd>MIT</dd>
+            </div>
+            <div>
+              <dt>Source</dt>
+              <dd>
+                <a href="https://github.com/filipgutica/devps">filipgutica/devps</a>
+              </dd>
+            </div>
+          </dl>
+        </div>
       </section>
 
       <section class="capture" aria-labelledby="first-run-title">
@@ -187,7 +191,7 @@ const keys = [
             Enter <code>y</code> to confirm, or press Enter to skip.
           </li>
         </ol>
-        <p class="hint">These captures use demo projects and sample processes.</p>
+        <p class="fg-site-meta">These captures use demo projects and sample processes.</p>
         <UiCapture :items="captures" label="Steps">
           <template #caption="{ item }">
             <p v-if="item.id === 'pick'">
@@ -242,7 +246,7 @@ const keys = [
           <dt><code>-y</code>, <code>--yes</code></dt>
           <dd>Skip stop confirmations. Example: <code>devps kill 5173 -y</code>.</dd>
         </dl>
-        <p class="hint">
+        <p class="fg-site-meta">
           Before stopping, devps reports the process count and names up to eight processes.
           <a href="#stopping-title">Stop safeguards</a> also apply when confirmation is skipped.
         </p>
@@ -432,7 +436,7 @@ const keys = [
             <code>~/.codex/packages</code>.
           </li>
         </ol>
-        <p class="hint">
+        <p class="fg-site-meta">
           A compiled server outside your home directory can be hidden, such as a
           <code>go run</code> binary in a temporary folder.
         </p>
