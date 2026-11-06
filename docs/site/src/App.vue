@@ -12,10 +12,15 @@ const navigation = [
   {
     items: [
       { label: 'Install', href: '#install' },
+      { label: 'First run', href: '#first-run-title' },
       { label: 'Commands', href: '#commands-title' },
-      { label: 'Keys in the picker', href: '#keys-title' },
-      { label: 'Where jump lands', href: '#jump-title' },
-      { label: 'Good to know', href: '#limits-title' },
+      { label: 'Picker keys', href: '#keys-title' },
+      { label: 'Table columns', href: '#columns-title' },
+      { label: 'Jump targets', href: '#jump-title' },
+      { label: 'Jobs and origins', href: '#jobs-title' },
+      { label: 'Server detection', href: '#detection-title' },
+      { label: 'Stopping safely', href: '#stopping-title' },
+      { label: 'Limits', href: '#limits-title' },
     ],
   },
 ];
@@ -26,11 +31,11 @@ const commands = [
   },
   {
     command: 'devps ls',
-    description: 'Print a plain table.',
+    description: 'Print the jobs as a plain table.',
   },
   {
     command: 'devps jump 5173',
-    description: 'Return to the origin of the server on port 5173.',
+    description: 'Focus the terminal, editor, or app that started the job.',
   },
   {
     command: 'devps open 5173',
@@ -39,14 +44,18 @@ const commands = [
     command: 'devps kill 5173',
   },
   {
-    command: 'devps --all',
-    description: 'Show every TCP listener, not only dev servers.',
+    command: 'devps --version',
+    description: 'Print the installed version. Alias: -V.',
+  },
+  {
+    command: 'devps --help',
+    description: 'Print usage. Aliases: -h and help.',
   },
 ];
 const keys = [
   {
     command: '/',
-    description: 'Start a search.',
+    description: 'From browse mode, start a search.',
   },
   {
     command: 'q',
@@ -55,23 +64,23 @@ const keys = [
   {
     command: 'Enter',
     description:
-      "In browse mode, jump to the selected job's origin. With several jobs selected, devps jumps to one only. While searching, keep the filter and return to browsing. The header shows the active filter.",
+      'Browse: jump to one job, even with several selected. Search: keep the filter and return to browsing.',
   },
   {
     command: 'Esc',
-    description: 'In browse mode, quit. While searching, clear the filter and return to browsing.',
+    description: 'Browse: quit. Search: clear the filter and return to browsing.',
   },
   {
     command: 'Ctrl+O',
-    description: 'Open every port of the selected jobs in your browser.',
+    description: 'Open every port of every selected job in the browser.',
   },
   {
     command: 'Ctrl+X',
-    description: 'Stop the selected jobs after you confirm.',
+    description: 'Stop selected jobs, with a separate confirmation for each. Then press Enter to return to the list.',
   },
   {
     command: 'Tab',
-    description: 'Select more than one job.',
+    description: 'Select multiple jobs.',
   },
   {
     command: 'Ctrl+R',
@@ -106,20 +115,17 @@ const keys = [
     <UiSiteNav label="On this page" :groups="navigation" />
     <main id="main">
       <section class="intro" aria-labelledby="title">
-        <h1 id="title">Find and manage local dev servers.</h1>
+        <h1 id="title">Find the dev server you left running.</h1>
         <p class="lede">
-          devps is <code>ps</code> for dev servers on macOS. It lists the dev servers you have
-          running, with their ports, project, and age, and their <em>origin</em>: the terminal,
-          editor, or agent that started them. Use it to find a server you forgot, jump back to its
-          origin, open it in the browser, or stop it.
-        </p>
-        <p class="lede">
-          devps groups a command such as <code>pnpm dev</code> and the servers it starts into one
-          <em>job</em>. If <code>pnpm dev</code> starts two Vite servers, devps shows one row with
-          both ports.
+          devps is a command-line tool for macOS that lists local dev servers and shows what
+          started each one. Find a server by its port or project, return to its terminal, editor,
+          or agent app, open it in the browser, or stop it.
         </p>
         <div id="install" class="install-command">
-          <p class="hint">Install with Homebrew</p>
+          <p class="hint">
+            Install with Homebrew. If you need Homebrew first,
+            <a href="https://brew.sh/">install it here</a>.
+          </p>
           <UiCodeBlock
             code="brew install filipgutica/tap/devps"
             language="bash"
@@ -128,12 +134,6 @@ const keys = [
             :wrap="true"
           />
         </div>
-        <p class="hint">
-          Then run <code>devps</code> to open the interactive picker, or <code>devps ls</code> to
-          print a plain table. The picker needs <code>fzf</code> 0.66 or newer and a terminal.
-          Without them, <code>devps</code> prints the table instead.
-          <a href="https://brew.sh/">Install Homebrew</a> if you don't have it.
-        </p>
         <dl class="fg-site-facts">
           <div>
             <dt>Runs on</dt>
@@ -156,94 +156,106 @@ const keys = [
         </dl>
       </section>
 
-      <section class="capture" aria-label="devps in use">
+      <section class="capture" aria-labelledby="first-run-title">
+        <header>
+          <h2 id="first-run-title">First run</h2>
+          <p>
+            Use a port from your server list in place of <code>5173</code> below.
+            Each row is a <em>job</em>: a launched command and the servers it starts.
+          </p>
+        </header>
+        <ol>
+          <li>
+            Run <code>devps ls</code>. Find your server by its ports, project, or command.
+            If it is missing, see <a href="#detection-title">Which servers appear</a>.
+          </li>
+          <li>
+            If <code>fzf</code> 0.66 or newer is installed, run <code>devps</code> in a terminal
+            to open the picker. Otherwise, devps prints the table instead.
+            Press <kbd>q</kbd> to leave the picker.
+          </li>
+          <li>
+            Run <code>devps jump 5173</code> to return to the server's origin.
+            The picker's preview shows where a jump will land.
+          </li>
+          <li>
+            Run <code>devps open 5173</code> to open the job's localhost URLs in your browser.
+            If the job has several ports, this opens all of them.
+          </li>
+          <li>
+            Run <code>devps kill 5173</code> to stop the whole job, including its child processes.
+            Enter <code>y</code> to confirm, or press Enter to skip.
+          </li>
+        </ol>
         <p class="hint">These captures use demo projects and sample processes.</p>
         <UiCapture :items="captures" label="Steps">
           <template #caption="{ item }">
             <p v-if="item.id === 'pick'">
-              The preview under the list shows the selected job's origin, where a jump would land,
-              its working directory, and the chain of processes that launched it.
+              The preview shows the job's origin, jump target, working directory, and the
+              processes that launched it.
             </p>
             <p v-else-if="item.id === 'orphan'">
-              A job is <em>orphaned</em> when the process that started it has exited.
-              devps marks it <code>⚠ orphaned</code>. Here devps still knows which Codex thread
-              started the server, so a jump focuses the Codex app and copies the thread's resume
-              command.
+              This server outlived its launcher. devps recovered its Codex thread ID, so the
+              jump target includes a resume command.
             </p>
             <p v-else-if="item.id === 'list'">
-              <code>devps ls</code> prints the same rows as a plain table.
+              The plain table and the picker show the same job rows.
             </p>
             <p v-else-if="item.id === 'stop'">
-              devps lists the processes it will stop and asks before it stops them.
+              The stop prompt identifies the job by its ports and project.
             </p>
           </template>
         </UiCapture>
-        <UiCard title="On screen" title-tag="h3">
-          <dl class="fg-site-legend">
-            <div>
-              <dt>PORTS</dt>
-              <dd>The ports the job listens on.</dd>
-            </div>
-            <div>
-              <dt>PROJECT</dt>
-              <dd>
-                The repository, plus the <code>[worktree]</code> and subfolder when they differ.
-              </dd>
-            </div>
-            <div>
-              <dt>COMMAND</dt>
-              <dd>The command that started the job, such as <code>pnpm dev</code>.</dd>
-            </div>
-            <div>
-              <dt>ORIGIN</dt>
-              <dd>
-                Where the job came from, or <code>⚠ orphaned</code>.
-              </dd>
-            </div>
-            <div>
-              <dt>AGE</dt>
-              <dd>How long the job has run.</dd>
-            </div>
-            <div>
-              <dt>PID</dt>
-              <dd>
-                The job's root process: the top process below the shell, agent, or app that
-                launched it.
-              </dd>
-            </div>
-          </dl>
-        </UiCard>
       </section>
+
       <section aria-labelledby="commands-title">
         <header>
-          <h2 id="commands-title">Commands</h2>
+          <h2 id="commands-title">Commands and flags</h2>
           <p>
-            <code>jump</code>, <code>open</code>, and <code>kill</code> take a port or a process ID.
-            devps looks for a job on that port first, then for a job whose root process or
-            listening process has that ID.
+            <code>jump</code>, <code>open</code>, and <code>kill</code> accept one or more ports
+            or process IDs (PIDs), separated by spaces. A port can include a leading colon:
+            <code>devps kill :5173 :6006</code>.
+          </p>
+          <p>
+            A port match takes priority over a PID match. A PID must identify a job root or
+            a listening process; other child PIDs do not match.
           </p>
         </header>
         <UiCommandList :items="commands" copyable description-header="What it does">
           <template #description="{ item }">
             <template v-if="item.command === 'devps open 5173'"
-              >Open <code>http://localhost:5173</code> in your browser. If the job listens on more
-              ports, devps opens each one.</template
+              >Open <code>http://localhost:&lt;port&gt;</code> for every port in the matched job.</template
             >
             <template v-else-if="item.command === 'devps kill 5173'"
-              >Stop the whole job after you confirm. <code>-y</code> skips the
-              confirmation.</template
+              >Stop the whole job after confirmation. <code>stop</code> is an alias for
+              <code>kill</code>.</template
             >
             <template v-else>{{ item.description }}</template>
           </template>
         </UiCommandList>
+        <dl class="fg-site-definitions">
+          <dt><code>--all</code></dt>
+          <dd>
+            Include every TCP listener, bypassing the dev server filter. Works with every
+            command, including <code>devps jump --all 5173</code>.
+          </dd>
+          <dt><code>-y</code>, <code>--yes</code></dt>
+          <dd>Skip stop confirmations. Example: <code>devps kill 5173 -y</code>.</dd>
+        </dl>
+        <p class="hint">
+          Before stopping, devps reports the process count and names up to eight processes.
+          <a href="#stopping-title">Stop safeguards</a> also apply when confirmation is skipped.
+        </p>
       </section>
+
       <section aria-labelledby="keys-title">
         <header>
-          <h2 id="keys-title">Keys in the picker</h2>
+          <h2 id="keys-title">Picker keys</h2>
           <p>
-            The picker starts in browse mode. Press <kbd>/</kbd> to search. While you search,
-            <kbd>q</kbd> and <kbd>/</kbd> type text instead of running their commands.
+            The picker starts in browse mode. While searching, <kbd>q</kbd> and <kbd>/</kbd>
+            enter text. When you return to browsing, the header shows the active filter.
           </p>
+          <p>The Ctrl shortcuts and multi-selection work in both modes.</p>
         </header>
         <UiCommandList
           :items="keys"
@@ -259,17 +271,57 @@ const keys = [
           </template>
           <template #description="{ item }">
             <template v-if="item.command === 'Ctrl+↑ / Ctrl+↓'"
-              >Scroll the preview. The <kbd>Ctrl</kbd> shortcuts and multi-selection work in both
-              modes.</template
+              >Scroll the preview.</template
             >
             <template v-else>{{ item.description }}</template>
           </template>
         </UiCommandList>
       </section>
+
+      <section aria-labelledby="columns-title">
+        <header>
+          <h2 id="columns-title">Table columns</h2>
+        </header>
+        <UiCard title="On screen" title-tag="h3">
+          <dl class="fg-site-legend">
+            <div>
+              <dt>PORTS</dt>
+              <dd>The job's listening TCP ports.</dd>
+            </div>
+            <div>
+              <dt>PROJECT</dt>
+              <dd>
+                Repository, <code>[worktree]</code> when its name differs, and subfolder.
+                Outside a repository, the working directory.
+              </dd>
+            </div>
+            <div>
+              <dt>COMMAND</dt>
+              <dd>The job root's command, shortened for display.</dd>
+            </div>
+            <div>
+              <dt>ORIGIN</dt>
+              <dd>The agent and host, when known. <code>⚠ orphaned</code> marks an orphaned job.</dd>
+            </div>
+            <div>
+              <dt>AGE</dt>
+              <dd>Time since the job root started.</dd>
+            </div>
+            <div>
+              <dt>PID</dt>
+              <dd>The job root's process ID.</dd>
+            </div>
+          </dl>
+        </UiCard>
+      </section>
+
       <section aria-labelledby="jump-title">
         <header>
-          <h2 id="jump-title">Where jump lands</h2>
-          <p>Where a jump lands depends on what devps can learn about the origin.</p>
+          <h2 id="jump-title">Jump targets</h2>
+          <p>
+            A jump can focus an exact tab or pane only when the required session information
+            is available. The preview shows the target devps found.
+          </p>
         </header>
         <div class="scroll">
           <table class="data">
@@ -281,54 +333,147 @@ const keys = [
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Warp, iTerm2, Terminal, tmux</th>
-                <td>The tab or pane, when its session information is available.</td>
+                <th scope="row">Warp, iTerm2, Terminal</th>
+                <td>The matching tab, when known; otherwise the app.</td>
+              </tr>
+              <tr>
+                <th scope="row">tmux</th>
+                <td>The pane, when its ID and a tmux ancestor are known.</td>
               </tr>
               <tr>
                 <th scope="row">VS Code</th>
-                <td>The window for that folder. devps cannot select a VS Code terminal tab.</td>
+                <td>The window for the folder. Terminal tab selection is unavailable.</td>
               </tr>
               <tr>
-                <th scope="row">Codex app, T3 Code Workbench, Claude app</th>
-                <td>
-                  The app. A job from the Codex app or a Codex thread focuses the Codex app,
-                  even inside T3 Code Workbench. For these jobs, when devps knows the session ID, it
-                  also copies <code>codex resume &lt;id&gt;</code> to the clipboard. For an orphaned job with a
-                  known Claude Code session, it copies <code>claude --resume &lt;id&gt;</code>.
-                </td>
+                <th scope="row">Codex app or Codex thread</th>
+                <td>The Codex app, including jobs started inside T3 Code Workbench.</td>
+              </tr>
+              <tr>
+                <th scope="row">T3 Code Workbench, Claude app, other apps</th>
+                <td>The host app, unless the Codex target above applies.</td>
+              </tr>
+              <tr>
+                <th scope="row">No known target</th>
+                <td>Nothing to focus.</td>
               </tr>
             </tbody>
           </table>
         </div>
+        <dl class="fg-site-definitions">
+          <dt>Codex resume command</dt>
+          <dd>
+            With a known session ID, jumping to a Codex app or Codex thread job also copies
+            <code>codex resume &lt;id&gt;</code> to the clipboard. This includes orphaned jobs,
+            but excludes a live Codex CLI in a terminal.
+          </dd>
+          <dt>Claude Code resume command</dt>
+          <dd>
+            For an orphaned job with a known Claude Code session, jumping also copies
+            <code>claude --resume &lt;id&gt;</code>.
+          </dd>
+        </dl>
       </section>
 
-      <section aria-labelledby="limits-title">
-        <h2 id="limits-title">Good to know</h2>
+      <section aria-labelledby="jobs-title">
+        <header>
+          <h2 id="jobs-title">How jobs and origins are found</h2>
+          <p>
+            Each run takes a fresh snapshot of TCP listeners and processes.
+            devps keeps no state between runs.
+          </p>
+        </header>
         <dl class="fg-site-definitions">
-          <dt>Stopping</dt>
+          <dt>One row per launched command</dt>
           <dd>
-            devps sends <code>SIGTERM</code> to the job's root process and its children. After three
-            seconds it sends <code>SIGKILL</code> to any that are still running. It skips PID 1,
-            devps and the processes that launched it, and programs inside a <code>.app</code> bundle
-            in an Applications folder.
+            devps follows each listener's parents up to the process just below a shell,
+            agent, app, tmux, or launchd. This process is the job root.
+            Listeners with the same root share a row. For example, if <code>pnpm dev</code>
+            starts two Vite servers, one row shows both ports.
+          </dd>
+          <dt>The origin</dt>
+          <dd>
+            Above the root, devps looks for the nearest Claude Code or Codex process and the
+            nearest host app. These form labels such as <code>Claude Code · Warp</code>.
+          </dd>
+          <dt>Orphaned jobs</dt>
+          <dd>
+            A job is orphaned when its root's parent is PID 1 and the root is not an installed app.
+            This usually means the terminal or agent that started it has ended. Inherited session
+            and app hints can still identify the origin.
           </dd>
           <dt>Environment hints</dt>
           <dd>
-            devps finds an origin by tracing the processes that started the job, plus a fixed list
-            of inherited environment hints. It reads the job's full environment but keeps only those
-            hints. The preview shows them.
-          </dd>
-          <dt>Hidden servers</dt>
-          <dd>
-            The default filter can hide compiled servers outside your home directory.
-            <code>--all</code> shows every TCP listener.
-          </dd>
-          <dt>System tools</dt>
-          <dd>
-            devps uses the macOS tools <code>ps</code>, <code>lsof</code>, <code>open</code>,
-            <code>osascript</code>, and <code>pbcopy</code>.
+            devps reads each job root's full environment with <code>ps -wwE</code>, then keeps
+            only a fixed allowlist of keys. These include terminal session IDs, agent session IDs,
+            and app identifiers. The preview prints the kept keys and their values.
           </dd>
         </dl>
+      </section>
+
+      <section aria-labelledby="detection-title">
+        <header>
+          <h2 id="detection-title">Which servers appear</h2>
+          <p>
+            By default, a TCP listener must meet both conditions below.
+            <a href="#commands-title"><code>--all</code></a> lists every listener instead.
+          </p>
+        </header>
+        <ol>
+          <li>
+            Its executable is outside an installed <code>.app</code> bundle in
+            <code>/Applications</code>, <code>/System/Applications</code>, or
+            <code>~/Applications</code>, including their subfolders.
+          </li>
+          <li>
+            Its executable name matches a recognized runtime, such as <code>node</code>,
+            <code>bun</code>, <code>python3</code>, or <code>go</code>; or its executable is
+            under your home directory. The home-directory rule excludes
+            <code>~/.vscode</code>, <code>~/.cursor</code>, <code>~/Library</code>, and
+            <code>~/.codex/packages</code>.
+          </li>
+        </ol>
+        <p class="hint">
+          A compiled server outside your home directory can be hidden, such as a
+          <code>go run</code> binary in a temporary folder.
+        </p>
+      </section>
+
+      <section aria-labelledby="stopping-title">
+        <header>
+          <h2 id="stopping-title">How stopping protects other processes</h2>
+        </header>
+        <dl class="fg-site-definitions">
+          <dt>Check the root again</dt>
+          <dd>
+            Before stopping, devps reads the process table again. It refuses if the root PID
+            has disappeared or now belongs to a different executable. Refresh and try again.
+          </dd>
+          <dt>Exclude protected processes</dt>
+          <dd>
+            From the root and its descendants, devps excludes PID 1, itself, the processes
+            that launched it, and programs inside installed <code>.app</code> bundles in the
+            Applications folders listed above. These exclusions also apply with <code>--all</code>.
+          </dd>
+          <dt>Terminate, then force survivors to stop</dt>
+          <dd>
+            devps sends <code>SIGTERM</code> to the remaining processes. It waits up to three
+            seconds for them to exit, then sends <code>SIGKILL</code> to any survivors.
+          </dd>
+        </dl>
+      </section>
+
+      <section aria-labelledby="limits-title">
+        <header>
+          <h2 id="limits-title">Limits</h2>
+          <p>
+            devps uses the macOS tools <code>ps</code>, <code>lsof</code>, <code>open</code>,
+            <code>osascript</code>, and <code>pbcopy</code>.
+          </p>
+        </header>
+        <p>
+          Origin hints can survive a launcher, but the original tab or conversation may be gone.
+          A resume command does not mean devps can reopen that conversation in the app.
+        </p>
         <nav class="links" aria-label="Documentation">
           <a href="https://github.com/filipgutica/devps#readme">Full reference</a>
           <a href="https://github.com/filipgutica/devps/blob/main/docs/ARCHITECTURE.md"
