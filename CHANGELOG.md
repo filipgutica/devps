@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/filipgutica/devps/compare/v0.3.0...v0.4.0) (2026-11-13)
+
+
+### Features
+
+* **site:** adopt the shared Graphite Indigo design language ([#19](https://github.com/filipgutica/devps/issues/19)) ([f80f013](https://github.com/filipgutica/devps/commit/f80f013046db454c8afa828a3e957c57a2cdc702))
+* **site:** adopt the ui 1.14.0 terminal folio theme ([#30](https://github.com/filipgutica/devps/issues/30)) ([0acf78d](https://github.com/filipgutica/devps/commit/0acf78d5223cc9e202b1aef3c2ad77be0712542c))
+
 ## [0.3.0](https://github.com/filipgutica/devps/compare/v0.2.0...v0.3.0) (2026-10-04)
 
 
