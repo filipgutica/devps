@@ -105,6 +105,8 @@ const traverseHistory = async ({
 for (const width of [320, 390, 768, 801, 1280]) {
   test(`responsive layout and capture sizing at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
+    // Copy, header links, and other quiet actions are 32px on desktop and 44px at tablet width.
+    const target = width <= 800 ? 44 : 32;
     await load(page);
     await noOverflow(page);
     const header = page.locator('.fg-site-header');
@@ -140,8 +142,8 @@ for (const width of [320, 390, 768, 801, 1280]) {
     // Phones wrap the command onto two lines. The code-block frame adds a 4px inset
     // and a 1px border above and below the code.
     expect(blockBox?.height ?? Infinity).toBeLessThanOrEqual(width <= 640 ? 74 : 60);
-    expect(copyBox?.width ?? 0).toBeGreaterThanOrEqual(44);
-    expect(copyBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(copyBox?.width ?? 0).toBeCloseTo(target, 0);
+    expect(copyBox?.height ?? 0).toBeCloseTo(target, 0);
     expect(
       Math.abs(
         (codeBox?.y ?? 0) + (codeBox?.height ?? 0) / 2 -
@@ -160,8 +162,8 @@ for (const width of [320, 390, 768, 801, 1280]) {
       const commandBox = await row.locator('.fg-command-list__command').boundingBox();
       const buttonBox = await row.getByRole('button').boundingBox();
       expect((commandBox?.x ?? 0) + (commandBox?.width ?? 0)).toBeLessThanOrEqual((buttonBox?.x ?? 0) + 1);
-      expect(buttonBox?.width ?? 0).toBeGreaterThanOrEqual(44);
-      expect(buttonBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+      expect(buttonBox?.width ?? 0).toBeCloseTo(target, 0);
+      expect(buttonBox?.height ?? 0).toBeCloseTo(target, 0);
     }
     const keys = page.locator('section[aria-labelledby="keys-title"]');
     await expect(keys.locator('.fg-command-list__command')).toHaveText([
